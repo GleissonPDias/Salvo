@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/salvo_fundo"
+    android:padding="24dp"
+    tools:context=".MainScreenActivity">
+
+    <TextView
+        android:id="@+id/tv_boas_vindas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Boas-vindas, Usuário!"
+        android:textColor="@color/salvo_texto_principal"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_subtitulo_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="O que você precisa hoje?"
+        android:textColor="@color/salvo_texto_secundario"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@id/tv_boas_vindas"
+        app:layout_constraintTop_toBottomOf="@id/tv_boas_vindas" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_pedir_socorro"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginTop="24dp"
+        android:text="PEDIR SOCORRO AGORA"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="#D32F2F"
+        app:cornerRadius="12dp"
+        app:icon="@android:drawable/ic_dialog_alert"
+        app:iconGravity="textStart"
+        app:layout_constraintTop_toBottomOf="@id/tv_subtitulo_home"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/container_cards"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_logoff"
+        app:layout_constraintTop_toBottomOf="@id/btn_pedir_socorro">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_pedidos"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginVertical="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/salvo_card_fundo"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeColor="@color/salvo_linha_divisoria"
+            app:strokeWidth="1dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/iv_icone_pedidos"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/logo"
+                    app:tint="@color/salvo_azul_neon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_titulo_card_pedidos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Meus Pedidos"
+                    android:textColor="@color/salvo_texto_principal"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_pedidos"
+                    app:layout_constraintStart_toEndOf="@id/iv_icone_pedidos"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <TextView
+                    android:id="@+id/tv_desc_pedidos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Histórico de serviços"
+                    android:textColor="@color/salvo_texto_secundario"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_titulo_card_pedidos"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_titulo_card_pedidos" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_back"
+                    android:rotation="180"
+                    app:tint="@color/salvo_texto_secundario"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_avaliacao"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginVertical="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/salvo_card_fundo"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeColor="@color/salvo_linha_divisoria"
+            app:strokeWidth="1dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/iv_icone_avaliacao"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/logo"
+                    app:tint="@color/salvo_laranja"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_titulo_card_avaliacao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Avaliar Serviço"
+                    android:textColor="@color/salvo_texto_principal"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_avaliacao"
+                    app:layout_constraintStart_toEndOf="@id/iv_icone_avaliacao"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <TextView
+                    android:id="@+id/tv_desc_avaliacao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dê sua nota ao mecânico"
+                    android:textColor="@color/salvo_texto_secundario"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_titulo_card_avaliacao"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_titulo_card_avaliacao" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_back"
+                    android:rotation="180"
+                    app:tint="@color/salvo_texto_secundario"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_sobre"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginVertical="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/salvo_card_fundo"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeColor="@color/salvo_linha_divisoria"
+            app:strokeWidth="1dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/iv_icone_sobre"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/logo"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_titulo_card_sobre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Sobre o Salvô"
+                    android:textColor="@color/salvo_texto_principal"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_sobre"
+                    app:layout_constraintStart_toEndOf="@id/iv_icone_sobre"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <TextView
+                    android:id="@+id/tv_desc_sobre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Termos e missão"
+                    android:textColor="@color/salvo_texto_secundario"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_titulo_card_sobre"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_titulo_card_sobre" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_back"
+                    android:rotation="180"
+                    app:tint="@color/salvo_texto_secundario"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_logoff"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Deslogar (Sair)"
+        android:textSize="16sp"
+        android:textColor="@color/salvo_laranja"
+        app:iconTint="@color/salvo_laranja"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
