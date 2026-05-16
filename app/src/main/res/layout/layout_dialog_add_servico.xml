@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#1C212E"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tv_titulo_dialog_servico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Novo Serviço"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="Nome do Serviço (ex: Guincho, Carga de Bateria)"
+        android:textColorHint="#9CA3AF"
+        app:hintTextColor="#F59E0B">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_nome_servico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            android:textColor="#FFFFFF" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:hint="Valor Base (R$)"
+            android:textColorHint="#9CA3AF"
+            app:hintTextColor="#F59E0B">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_preco_base"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textColor="#FFFFFF" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:hint="Valor por KM (R$)"
+            android:textColorHint="#9CA3AF"
+            app:hintTextColor="#F59E0B">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_preco_km"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textColor="#FFFFFF" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Dica: Se o serviço for de preço único (ex: Chaveiro a R$ 100), preencha o Valor Base com 100 e o Valor por KM com 0."
+        android:textColor="#6B7280"
+        android:textSize="12sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_salvar_servico"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
+        android:text="SALVAR SERVIÇO"
+        android:textColor="#000000"
+        app:backgroundTint="#F59E0B"
+        app:cornerRadius="12dp" />
+
+</LinearLayout>

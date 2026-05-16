@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/salvo_fundo"
+    tools:context=".SobreActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_sobre"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/transparent"
+        app:navigationIconTint="@color/salvo_texto_principal"
+        app:title="Sobre o App"
+        app:titleTextColor="@color/salvo_texto_principal"
+        app:titleCentered="true"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_sobre">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <ImageView
+                android:id="@+id/iv_logo_sobre"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="Logo Salvô"
+                android:src="@drawable/logo" />
+
+            <TextView
+                android:id="@+id/tv_descricao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Ficou na mão? O Salvô resolve. Nossa missão é conectar quem precisa de socorro automotivo rápido com quem está pronto para trabalhar. Uma plataforma de economia colaborativa pensada para o dia a dia do motorista brasileiro."
+                android:textAlignment="center"
+                android:textColor="@color/salvo_texto_secundario"
+                android:textSize="16sp"
+                android:lineSpacingExtra="4dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/salvo_linha_divisoria" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_termos"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Termos de Uso"
+                android:textSize="16sp"
+                android:textColor="@color/salvo_azul_neon"
+                app:iconTint="@color/salvo_azul_neon" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_privacidade"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Política de Privacidade"
+                android:textSize="16sp"
+                android:textColor="@color/salvo_azul_neon"
+
+                app:iconTint="@color/salvo_azul_neon" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_desenvolvedores"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="Equipe de Desenvolvimento"
+                android:textColor="@color/salvo_azul_neon"
+                app:iconTint="@color/salvo_azul_neon" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:minHeight="40dp" />
+
+            <TextView
+                android:id="@+id/tv_copyright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="© 2026 Salvô. Todos os direitos reservados."
+                android:textColor="@color/salvo_texto_secundario"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

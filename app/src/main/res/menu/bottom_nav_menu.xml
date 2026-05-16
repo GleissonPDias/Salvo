@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_radar"
+        android:icon="@android:drawable/ic_menu_compass"
+        android:title="RADAR" />
+
+    <item
+        android:id="@+id/nav_servicos"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="SERVIÇOS" />
+
+    <item
+        android:id="@+id/nav_frota"
+        android:icon="@android:drawable/ic_menu_directions"
+        android:title="FROTA" />
+
+    <item
+        android:id="@+id/nav_chat"
+        android:icon="@android:drawable/sym_action_chat"
+        android:title="CHAT" />
+
+    <item
+        android:id="@+id/nav_perfil"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="PERFIL" />
+
+</menu>

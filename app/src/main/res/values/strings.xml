@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Salvo</string>
+    <string name="entrar">Entrar</string>
+    <string name="text_cadastro">Não tem conta? Cadastre-se aqui</string>
+    <string name="text_forgot_password">Esqueceu a senha?</string>
+    <string name="txt_entre_com"> Ou entre com </string>
+    <string name="text_cadastre_com"> Ou cadastre-se com </string>
+    <string name="text_register">Cadastrar</string>
+    <string name="text_login_screen">Ja tem conta? Entre aqui </string>
+    <string name="choose_option_reg">Escolha uma opção abaixo</string>
+</resources>

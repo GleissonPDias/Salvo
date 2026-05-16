@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background"
+        tools:context=".RegisterMecActivity">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/containerComponents"
+            style="@style/ContainerComponentsReg"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logo" />
+
+        <EditText
+            android:id="@+id/reg_razao"
+            style="@style/EditTextCad"
+            android:layout_marginTop="20dp"
+            android:drawableLeft="@drawable/ic_mechanic_lt"
+            android:drawablePadding="10dp"
+            android:hint="Razão Social"
+            android:inputType="textCapWords"
+            app:layout_constraintEnd_toEndOf="@id/containerComponents"
+            app:layout_constraintStart_toStartOf="@id/containerComponents"
+            app:layout_constraintTop_toTopOf="@id/containerComponents" />
+
+        <EditText
+            android:id="@+id/reg_cnpj"
+            style="@style/EditTextCad"
+            android:layout_marginTop="12dp"
+            android:drawableLeft="@drawable/ic_cnpj"
+            android:drawablePadding="10dp"
+            android:hint="CNPJ"
+            android:inputType="number"
+            android:maxLength="14"
+            app:layout_constraintEnd_toEndOf="@id/reg_razao"
+            app:layout_constraintStart_toStartOf="@id/reg_razao"
+            app:layout_constraintTop_toBottomOf="@id/reg_razao" />
+
+        <EditText
+            android:id="@+id/reg_email"
+            style="@style/EditTextCad"
+            android:layout_marginTop="12dp"
+            android:drawableLeft="@drawable/ic_email"
+            android:drawablePadding="10dp"
+            android:hint="E-mail"
+            android:inputType="textEmailAddress"
+            app:layout_constraintEnd_toEndOf="@id/reg_razao"
+            app:layout_constraintStart_toStartOf="@id/reg_razao"
+            app:layout_constraintTop_toBottomOf="@id/reg_cnpj" />
+
+        <EditText
+            android:id="@+id/reg_telephone"
+            style="@style/EditTextCad"
+            android:layout_marginTop="12dp"
+            android:drawableLeft="@drawable/ic_telephone"
+            android:drawablePadding="10dp"
+            android:hint="(00)00000-0000"
+            android:inputType="phone"
+            android:maxLength="11"
+            app:layout_constraintEnd_toEndOf="@id/reg_razao"
+            app:layout_constraintStart_toStartOf="@id/reg_razao"
+            app:layout_constraintTop_toBottomOf="@id/reg_email" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_mec_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:boxBackgroundMode="none"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/salvo_texto_secundario"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="@id/reg_razao"
+            app:layout_constraintStart_toStartOf="@id/reg_razao"
+            app:layout_constraintTop_toBottomOf="@id/reg_telephone">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/reg_password"
+                style="@style/EditTextCad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:drawableLeft="@drawable/ic_lock"
+                android:drawablePadding="10dp"
+                android:hint="Senha"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_mec_confirm_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:boxBackgroundMode="none"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/salvo_texto_secundario"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="@id/reg_razao"
+            app:layout_constraintStart_toStartOf="@id/reg_razao"
+            app:layout_constraintTop_toBottomOf="@id/til_mec_password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/reg_confirm_password"
+                style="@style/EditTextCad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:drawableLeft="@drawable/ic_lock"
+                android:drawablePadding="10dp"
+                android:hint="Confirmar Senha"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_register"
+            style="@style/ButtonLogin"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="40dp"
+            android:text="@string/text_register"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_mec_confirm_password"
+            app:layout_constraintVertical_bias="0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
