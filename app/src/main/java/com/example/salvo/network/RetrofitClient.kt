@@ -1,9 +1,12 @@
 package com.example.salvo
 
+import com.example.salvo.model.AceitarPedidoRequestApp
+import com.example.salvo.model.AceitarPedidoResponse
 import com.example.salvo.model.AuthResponse
 import com.example.salvo.model.LoginRequest
 import com.example.salvo.model.PedidoSocorroRequest
 import com.example.salvo.model.PedidoSocorroResponse
+import com.example.salvo.model.PollingStatusResponse
 import com.example.salvo.model.ProviderServiceResponse
 import com.example.salvo.model.RegisterRequest
 import com.example.salvo.model.ServiceItem
@@ -106,6 +109,23 @@ interface ApiService {
         @Path("id") id: Int,
         @Path("providerId") providerId: Int
     ): Call<AuthResponse>
+
+    @POST("provider/toggle-status")
+    fun alterarStatusOnline(
+        @Body dados: Map<String, String>
+    ): Call<Map<String, Any>>
+
+    @POST("aceitar-socorro")
+    fun aceitarSocorro(
+        @Body dados: AceitarPedidoRequestApp
+    ): Call<AceitarPedidoResponse>
+
+
+    // Adicione esta chamada junto das outras na sua interface
+    @GET("status-pedido/{id}")
+    fun checarStatusPedido(
+        @Path("id") requestId: Int
+    ): Call<PollingStatusResponse>
 
 }
 

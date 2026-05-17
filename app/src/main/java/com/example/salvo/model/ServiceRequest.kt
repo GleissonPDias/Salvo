@@ -35,7 +35,16 @@ data class ServiceRequest(
     val destinoAddress: String?,
 
     @SerializedName("created_at")
-    val createdAt: String
+    val createdAt: String,
+
+    @SerializedName("prestador_foto")
+    val prestadorFoto: String?,
+
+    @SerializedName("veiculo_prestador_nome")
+    val veiculoPrestadorNome: String?,
+
+    @SerializedName("veiculo_prestador_placa")
+    val veiculoPrestadorPlaca: String?
 ) {
 
     // --- TRUQUES DE INTERFACE (UI HELPERS) ---
@@ -62,3 +71,29 @@ data class ServiceRequest(
         }
     }
 }
+data class PollingStatusResponse(
+    val status: String,
+    val razaoCancelamento: String?,
+    val detalhesOficina: OficinaDetalhesPolling?
+)
+
+data class OficinaDetalhesPolling(
+    val nome: String,
+    val fotoPerfil: String?,
+    val valorFinal: Double,
+    val distanciaKm: Double,
+    val nomeVeiculo: String?,
+    val placaVeiculo: String?
+)
+
+data class AceitarPedidoRequestApp(
+    val requestId: Int,
+    val providerId: Int,
+    val price: Double,
+    val distance: Double
+)
+
+data class AceitarPedidoResponse(
+    val sucesso: Boolean,
+    val mensagem: String
+)

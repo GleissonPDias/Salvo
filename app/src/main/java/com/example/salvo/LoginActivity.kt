@@ -2,6 +2,7 @@ package com.example.salvo
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -51,38 +52,60 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // 1. Usando o nosso Retrofit Central!
-        // Não precisamos mais construir o Retrofit aqui.
         RetrofitClient.apiService.login(LoginRequest(email, password))
             .enqueue(object : Callback<AuthResponse> {
-                override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
+                override fun onResponse(
+                    call: Call<AuthResponse>,
+                    response: Response<AuthResponse>
+                ) {
                     if (response.isSuccessful && response.body()?.sucesso == true) {
 
-                        // 2. Pegando os dados que vieram do banco
+                        // 1. Pegando os dados vindos do banco
                         val nomeRecebido = response.body()?.nome ?: "Usuário"
-                        val idRecebido = response.body()?.userId ?: -1 // <-- IMPORTANTE: Pegando o ID!
+                        val idRecebido = response.body()?.userId ?: -1
+                        val roleRecebida =
+                            response.body()?.role ?: "customer" // Assume customer se vier nulo
 
-                        Toast.makeText(this@LoginActivity, "Raio-x: id $idRecebido", Toast.LENGTH_LONG).show()
+                        Log.d("DEBUG_SALVO", "Login OK! Nome: $nomeRecebido, ID: $idRecebido, ROLE: ${response.body()?.role}")
 
-                        // 3. Preparando a viagem para a próxima tela
-                        val intent = Intent(this@LoginActivity, HomePrestadorActivity::class.java)
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Bem-vindo(a), $nomeRecebido!",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                        // 4. Colocando na mochila!
+                        // 2. Direcionamento exato com base no seu banco de dados
+                        val intent = if (roleRecebida.equals("provider", ignoreCase = true)) {
+                            // É prestador -> Vai para o Radar/Dashboard
+                            Intent(this@LoginActivity, HomePrestadorActivity::class.java)
+                        } else {
+                            // É cliente (customer) -> Vai para a tela de Pedir Socorro
+                            Intent(this@LoginActivity, MainScreenActivity::class.java)
+                        }
+
+                        // 3. Coloca os dados na mochila (ambas as telas precisam do ID e Nome)
                         intent.putExtra("NOME_USUARIO", nomeRecebido)
-                        intent.putExtra("USER_ID", idRecebido) // <-- Passando o ID pra frente!
+                        intent.putExtra("USER_ID", idRecebido)
 
-                        // Limpa a pilha para não voltar pro login
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        // 4. Trava o botão de "voltar" do celular para não retornar à tela de login
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
                         startActivity(intent)
                         finish()
+
                     } else {
-                        Toast.makeText(this@LoginActivity, "Usuário ou senha inválidos", Toast.LENGTH_SHORT).show()
+                        val errorMsg = response.body()?.message ?: "Usuário ou senha inválidos"
+                        Toast.makeText(this@LoginActivity, errorMsg, Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                    Toast.makeText(this@LoginActivity, "Erro de conexão: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "Erro de conexão: ${t.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
     }

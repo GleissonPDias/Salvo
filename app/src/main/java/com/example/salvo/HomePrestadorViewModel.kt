@@ -2,12 +2,10 @@ package com.example.salvo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 // 1. O Estado da Tela
 data class HomeUiState(
@@ -26,11 +24,22 @@ class HomePrestadorViewModel(
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     fun toggleStatus(isNowOnline: Boolean) {
-        viewModelScope.launch {
-            // Atualiza localmente para resposta rápida
-            _uiState.update { it.copy(isOnline = isNowOnline) }
+        val providerId = currentProviderId.toIntOrNull() ?: return
 
-            // Aqui futuramente a chamada de rede real
+        // 1. Atualiza localmente de forma otimista para a UI responder instantaneamente
+        _uiState.update { it.copy(isOnline = isNowOnline) }
+
+        // 2. Realiza a chamada de rede real usando o PerfilRepository
+        PerfilRepository().alternarStatusOnline(providerId, isNowOnline) { sucesso ->
+            if (!sucesso) {
+                // Se falhar no banco de dados, revertemos o status e injetamos o erro
+                _uiState.update {
+                    it.copy(
+                        isOnline = !isNowOnline, // Desfaz a mudança do Switch
+                        errorMessage = "Falha ao sincronizar status com o servidor."
+                    )
+                }
+            }
         }
     }
 

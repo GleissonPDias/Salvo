@@ -6,6 +6,9 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +29,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 import com.example.salvo.adapter.RecentActivity
 import com.example.salvo.adapter.RecentActivityAdapter
+import com.example.salvo.model.AceitarPedidoRequestApp
+import com.example.salvo.model.AceitarPedidoResponse
+import com.example.salvo.network.WebSocketManager
 
 class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -35,6 +41,12 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
     private var mMap: GoogleMap? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentUserId: Int = -1
+    private var socketManager: WebSocketManager? = null
+
+    private var pedidoAtualId: Int = -1
+    private var pedidoAtualPreco: Double = 0.0
+    private var pedidoAtualDistancia: Double = 0.0
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -49,12 +61,11 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityHomePrestadorBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // NOVO: Pegando o ID real enviado pela LoginActivity
         currentUserId = intent.getIntExtra("USER_ID", -1)
+        Log.d("SALVO_WEBSOCKET", "ID do prestador logado recebido na Home: $currentUserId")
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -64,20 +75,17 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
 
         setupViewModel()
         setupListeners()
+        setupAlertaSocorroListeners()
         observeViewModel()
         setupRecyclerView()
-
-        // NOVO: Inicializa a navegação
         setupBottomNavigation()
     }
-    // Configura a lista de atividades recentes com os dados idênticos ao Figma
+
     private fun setupRecyclerView() {
         val dadosFigma = listOf(
             RecentActivity(1, "Carlos Silva", "Towing Service", "2.5km", "R$ 120", "14:30"),
             RecentActivity(2, "Mariana Costa", "Battery Jump", "4.1km", "R$ 80", "11:15")
         )
-
-        // Configura o gerenciador de layout e acopla o adapter no RecyclerView do XML
         binding.rvAtividadesRecentes.layoutManager = LinearLayoutManager(this)
         binding.rvAtividadesRecentes.adapter = RecentActivityAdapter(dadosFigma)
     }
@@ -129,10 +137,7 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun setupViewModel() {
         val repository = ProviderHomeRepository()
-
-
         val providerIdString = currentUserId.toString()
-
         val factory = HomePrestadorViewModelFactory(repository, providerIdString)
         viewModel = ViewModelProvider(this, factory).get(HomePrestadorViewModel::class.java)
     }
@@ -141,6 +146,74 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.switchStatus.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) {
                 viewModel.toggleStatus(isChecked)
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupAlertaSocorroListeners() {
+        val alertaBinding = binding.containerAlerta
+
+        alertaBinding.btnRecusar.setOnClickListener {
+            alertaBinding.root.visibility = View.GONE
+            Toast.makeText(this, "Chamado recusado.", Toast.LENGTH_SHORT).show()
+        }
+
+        var dX = 0f
+        alertaBinding.btnSliderArrastar.setOnTouchListener { view, event ->
+            val trackLargura = alertaBinding.layoutDeslizar.width
+            val thumbLargura = view.width
+            val limiteMaximo = (trackLargura - thumbLargura - 15).toFloat()
+
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    dX = view.x - event.rawX
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    var novaPosicaoX = event.rawX + dX
+                    if (novaPosicaoX < 5f) novaPosicaoX = 5f
+                    if (novaPosicaoX > limiteMaximo) novaPosicaoX = limiteMaximo
+                    view.x = novaPosicaoX
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (view.x >= (limiteMaximo * 0.75f)) {
+
+                        // 1. O botão chegou até o final! Prepara o pacote para a API
+                        val requestSegura = AceitarPedidoRequestApp(
+                            requestId = pedidoAtualId,
+                            providerId = currentUserId,
+                            price = pedidoAtualPreco,
+                            distance = pedidoAtualDistancia
+                        )
+
+                        // 2. Chama o seu backend usando o Retrofit (Ajuste o RetrofitClient para a sua classe real)
+                        RetrofitClient.apiService.aceitarSocorro(requestSegura).enqueue(object : retrofit2.Callback<AceitarPedidoResponse> {
+                            override fun onResponse(call: retrofit2.Call<AceitarPedidoResponse>, response: retrofit2.Response<AceitarPedidoResponse>) {
+                                if (response.isSuccessful && response.body()?.sucesso == true) {
+                                    Toast.makeText(this@HomePrestadorActivity, "Serviço Confirmado!", Toast.LENGTH_LONG).show()
+                                    binding.containerAlerta.root.visibility = View.GONE
+                                    view.x = 5f
+                                } else {
+                                    Toast.makeText(this@HomePrestadorActivity, "Outra oficina aceitou primeiro!", Toast.LENGTH_LONG).show()
+                                    binding.containerAlerta.root.visibility = View.GONE
+                                    view.x = 5f
+                                }
+                            }
+
+                            override fun onFailure(call: retrofit2.Call<AceitarPedidoResponse>, t: Throwable) {
+                                Toast.makeText(this@HomePrestadorActivity, "Erro de conexão.", Toast.LENGTH_SHORT).show()
+                                view.animate().x(5f).setDuration(200).start()
+                            }
+                        })
+
+                    } else {
+                        // O mecânico soltou o dedo no meio do caminho, devolve o botão pro início
+                        view.animate().x(5f).setDuration(200).start()
+                    }
+                    true
+                } else -> false
             }
         }
     }
@@ -155,11 +228,37 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.tvStatusText.setTextColor(getColor(R.color.salvo_azul_neon))
                     binding.tvRadarStatus.text = "● Procurando"
                     binding.tvRadarStatus.setTextColor(Color.parseColor("#4CAF50"))
+
+                    if (socketManager == null && currentUserId != -1) {
+                        Log.d("SALVO_WEBSOCKET", "Iniciando WebSocketManager para o ID: $currentUserId")
+                        socketManager = WebSocketManager(currentUserId) { jsonChamado ->
+                            Log.w("SALVO_WEBSOCKET", "Abrindo CARD LARANJA na tela!")
+
+                            pedidoAtualId = jsonChamado.getInt("requestId")
+                            pedidoAtualPreco = jsonChamado.getDouble("rawPreco")
+                            pedidoAtualDistancia = jsonChamado.getDouble("rawDistancia")
+
+                            // DISPARO CRÍTICO: Torna o include visível e popula dados
+                            binding.containerAlerta.root.visibility = View.VISIBLE
+                            binding.containerAlerta.tvAlertaVeiculo.text = jsonChamado.getString("veiculo")
+                            binding.containerAlerta.tvAlertaDefeito.text = jsonChamado.getString("defeito")
+                            binding.containerAlerta.tvAlertaPreco.text = jsonChamado.getString("preco")
+                            binding.containerAlerta.tvAlertaClienteNome.text = jsonChamado.getString("clienteNome")
+                            binding.containerAlerta.tvAlertaClienteNota.text = jsonChamado.getString("clienteNota")
+                            binding.containerAlerta.tvAlertaDistancia.text = jsonChamado.getString("distanciaText")
+
+                        }
+                        socketManager?.conectar()
+                    }
+
                 } else {
                     binding.tvStatusText.text = "OFFLINE"
                     binding.tvStatusText.setTextColor(getColor(R.color.salvo_texto_secundario))
                     binding.tvRadarStatus.text = "○ Desconectado"
                     binding.tvRadarStatus.setTextColor(Color.parseColor("#9E9E9E"))
+
+                    socketManager?.desconectar()
+                    socketManager = null
                 }
 
                 state.errorMessage?.let { msg ->
@@ -169,42 +268,35 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
-    private fun setupBottomNavigation() {
-        // Garante que o ícone do Radar esteja marcado visualmente ao abrir a tela
-        binding.bottomNavigation.selectedItemId = R.id.nav_radar
 
+    private fun setupBottomNavigation() {
+        binding.bottomNavigation.selectedItemId = R.id.nav_radar
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_radar -> {
-                    // Já estamos no Radar, não fazemos nada e retornamos true para manter selecionado
-                    true
-                }
+                R.id.nav_radar -> true
                 R.id.nav_servicos -> {
-                    val intent = Intent(this, CardapioServicosActivity::class.java)
-                    intent.putExtra("USER_ID", currentUserId)
-                    startActivity(intent)
-                    // Retorna false para que o botão 'Radar' continue aceso na Home por baixo
+                    startActivity(Intent(this, CardapioServicosActivity::class.java).putExtra("USER_ID", currentUserId))
                     false
                 }
                 R.id.nav_frota -> {
-                    val intent = Intent(this, GestaoFrotaActivity::class.java)
-                    intent.putExtra("USER_ID", currentUserId)
-                    startActivity(intent)
+                    startActivity(Intent(this, GestaoFrotaActivity::class.java).putExtra("USER_ID", currentUserId))
                     false
                 }
                 R.id.nav_chat -> {
-                    // Como a tela de chat ainda não foi criada, mostramos um aviso
                     Toast.makeText(this, "Chat em desenvolvimento!", Toast.LENGTH_SHORT).show()
                     false
                 }
                 R.id.nav_perfil -> {
-                    val intent = Intent(this, PerfilOficinaActivity::class.java)
-                    intent.putExtra("USER_ID", currentUserId)
-                    startActivity(intent)
+                    startActivity(Intent(this, PerfilOficinaActivity::class.java).putExtra("USER_ID", currentUserId))
                     false
                 }
                 else -> false
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        socketManager?.desconectar()
     }
 }

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_alerta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="#222B38"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FF9800"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="14dp">
+
+                <ImageView
+                    android:id="@+id/iv_aviso"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/stat_sys_warning"
+                    app:tint="#151C26"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ALERTA DE SERVIÇO"
+                    android:textColor="#151C26"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:letterSpacing="0.05"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iv_aviso" />
+
+                <TextView
+                    android:id="@+id/tv_alerta_preco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="R$ 150,00"
+                    android:textColor="#151C26"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tv_alerta_veiculo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Honda Civic"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_veiculo_foto" />
+
+                <TextView
+                    android:id="@+id/tv_alerta_defeito"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="🔧 Pane Elétrica"
+                    android:textColor="#FF9800"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_alerta_veiculo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_veiculo_foto" />
+
+                <TextView
+                    android:id="@+id/tv_alerta_distancia"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="📍 Distância: 2.4 km  •  ~8 min"
+                    android:textColor="#94A3B8"
+                    android:textSize="13sp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_alerta_defeito"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_veiculo_foto" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/iv_veiculo_foto"
+                    android:layout_width="74dp"
+                    android:layout_height="74dp"
+                    app:cardCornerRadius="37dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#1A222D"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@android:drawable/ic_menu_directions"
+                        android:scaleType="centerInside"
+                        app:tint="#94A3B8" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_cliente_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_client_box"
+                    android:layout_marginTop="16dp"
+                    android:padding="12dp"
+                    app:layout_constraintTop_toBottomOf="@id/iv_veiculo_foto"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <ImageView
+                        android:id="@+id/iv_avatar_cliente"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@android:drawable/ic_menu_myplaces"
+                        app:tint="#FF9800"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_alerta_cliente_nome"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Carlos M."
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:layout_marginStart="10dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/iv_avatar_cliente"
+                        app:layout_constraintEnd_toStartOf="@+id/btn_recusar" />
+
+                    <TextView
+                        android:id="@+id/tv_alerta_cliente_nota"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="⭐ 4.9 (12 viagens)"
+                        android:textColor="#FF9800"
+                        android:textSize="12sp"
+                        android:layout_marginStart="10dp"
+                        app:layout_constraintTop_toBottomOf="@id/tv_alerta_cliente_nome"
+                        app:layout_constraintStart_toEndOf="@id/iv_avatar_cliente"
+                        app:layout_constraintEnd_toStartOf="@+id/btn_recusar" />
+
+                    <TextView
+                        android:id="@+id/btn_recusar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✕ Recusar"
+                        android:textColor="#FF5252"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:padding="8dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_deslizar"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="@drawable/bg_slider_track"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/card_alerta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DESLIZE PARA ACEITAR  ›››"
+            android:textColor="#64748B"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:letterSpacing="0.05"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/btn_slider_arrastar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/bg_slider_thumb"
+            android:src="@android:drawable/ic_media_play"
+            android:scaleType="centerInside"
+            app:tint="#151C26"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -170,18 +170,24 @@ class PerfilOficinaActivity : AppCompatActivity() {
 
     // --- LÓGICA DE ATUALIZAÇÃO ---
 
-    private fun atualizarNoServidor(campo: String, valor: String) {
-        val dados = mapOf(campo to valor)
+    private fun atualizarPacoteNoServidor(dados: Map<String, String>) {
         RetrofitClient.apiService.atualizarCampoPerfil(oficinaId, dados).enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@PerfilOficinaActivity, "Alteração salva!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PerfilOficinaActivity, "Alteração salva com sucesso!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@PerfilOficinaActivity, "Erro ao salvar no servidor", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
                 Toast.makeText(this@PerfilOficinaActivity, "Erro de conexão", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    // 2. Mantém a sua função original funcionando para nome, cnpj, foto, etc.
+    private fun atualizarNoServidor(campo: String, valor: String) {
+        atualizarPacoteNoServidor(mapOf(campo to valor))
     }
 
     private fun configurarCampoEditavel(btnEditId: Int, tvValorId: Int, layoutEditId: Int, etEditId: Int, btnSaveId: Int, campoBanco: String) {
@@ -236,10 +242,17 @@ class PerfilOficinaActivity : AppCompatActivity() {
             btnEdit.visibility = View.VISIBLE
             layoutEdit.visibility = View.GONE
 
-            atualizarNoServidor("user_address", novoEnd)
-            latLng?.let {
-                atualizarNoServidor("latitude", it.latitude.toString())
-                atualizarNoServidor("longitude", it.longitude.toString())
+            if (latLng != null) {
+                // 🔥 O SEGREDO: Monta o pacote triplo e envia de UMA vez só!
+                val pacoteLocalizacao = mapOf(
+                    "user_address" to novoEnd,
+                    "latitude" to latLng.latitude.toString(),
+                    "longitude" to latLng.longitude.toString()
+                )
+                atualizarPacoteNoServidor(pacoteLocalizacao)
+            } else {
+                // Prevenção de falha caso a LatLng esteja nula
+                atualizarNoServidor("user_address", novoEnd)
             }
         }
     }

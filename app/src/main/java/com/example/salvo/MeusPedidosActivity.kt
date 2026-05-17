@@ -7,12 +7,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.salvo.adapter.PedidosAdapter
 import com.example.salvo.model.ServiceRequest
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,8 +31,11 @@ class MeusPedidosActivity : AppCompatActivity() {
     // Guarda a lista completa que vem da API do Render
     private var todosPedidos: List<ServiceRequest> = emptyList()
 
-    // ⚠️ ID do usuário: fixo para teste. No app real, você puxará isso do login (SharedPreferences)
+    // ID do usuário logado
     private var userIdLogado = -1
+
+    // VARIÁVEL DO RELÓGIO (POLLING)
+    private var jobPolling: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +53,9 @@ class MeusPedidosActivity : AppCompatActivity() {
         configurarSistemaEWindowInsets()
         configurarToolbar()
         inicializarComponentes()
-        buscarDadosDaApi()
+
+        // INICIA O RELÓGIO ASSIM QUE A TELA ABRE
+        iniciarPollingDaLista()
     }
 
     private fun configurarSistemaEWindowInsets() {
@@ -70,14 +80,13 @@ class MeusPedidosActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Inicializa o nosso adaptador oficial (vazio no começo) e configura o clique do botão
+        // Inicializa o nosso adaptador oficial e configura o clique do botão
         adapter = PedidosAdapter(emptyList()) { pedidoClicado ->
             Toast.makeText(
                 this,
-                "Pedir novamente: ${pedidoClicado.serviceType}",
+                "Ação clicada para: ${pedidoClicado.serviceType}",
                 Toast.LENGTH_SHORT
             ).show()
-            // Futuro: Redirecionar para a tela de pedir socorro com os dados pré-preenchidos
         }
         recyclerView.adapter = adapter
 
@@ -85,14 +94,33 @@ class MeusPedidosActivity : AppCompatActivity() {
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 filtrarListaPelaAba(tab?.position ?: 0)
+
+                // Se o usuário mudou de aba, já atualizamos os dados para não esperar o relógio bater
+                buscarDadosDaApi(silencioso = true)
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
     }
 
-    private fun buscarDadosDaApi() {
-        // Usa o seu Singleton oficial para chamar a rede
+    // A FUNÇÃO MÁGICA QUE ATUALIZA A TELA SOZINHA
+    private fun iniciarPollingDaLista() {
+        jobPolling?.cancel() // Garante que não tem dois relógios rodando
+
+        jobPolling = lifecycleScope.launch {
+            while (isActive) {
+                // Se o usuário estiver na aba "Em Andamento" (Aba 0), ele atualiza silenciosamente
+                if (tabLayout.selectedTabPosition == 0) {
+                    buscarDadosDaApi(silencioso = true)
+                }
+                // Pausa de 5 segundos antes de perguntar ao servidor de novo
+                delay(5000)
+            }
+        }
+    }
+
+    // O PARÂMETRO 'silencioso' EVITA MENSAGENS DE ERRO A CADA 5 SEGUNDOS SE A NET CAIR
+    private fun buscarDadosDaApi(silencioso: Boolean = false) {
         val api = RetrofitClient.apiService
 
         api.listarPedidos(userIdLogado).enqueue(object : Callback<List<ServiceRequest>> {
@@ -102,34 +130,44 @@ class MeusPedidosActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful && response.body() != null) {
                     todosPedidos = response.body()!!
-
-                    // Alimenta a lista da tela de acordo com a aba selecionada no momento
                     filtrarListaPelaAba(tabLayout.selectedTabPosition)
-                } else {
+                } else if (!silencioso) {
                     Toast.makeText(this@MeusPedidosActivity, "Erro ao carregar lista", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<List<ServiceRequest>>, t: Throwable) {
-                Toast.makeText(this@MeusPedidosActivity, "Sem conexão com o servidor", Toast.LENGTH_SHORT).show()
+                if (!silencioso) {
+                    Toast.makeText(this@MeusPedidosActivity, "Sem conexão com o servidor", Toast.LENGTH_SHORT).show()
+                }
             }
         })
     }
 
-    /**
-     * Filtra a lista principal dependendo da aba clicada
-     */
     private fun filtrarListaPelaAba(posicaoAba: Int) {
         val listaFiltrada = when (posicaoAba) {
-            // Aba 0: Em Andamento
-            0 -> todosPedidos.filter { it.status == "searching" || it.status == "in_progress" }
+            // Aba 0: Incluímos o status "accepted" para ele continuar visível na aba de "Em andamento"
+            0 -> todosPedidos.filter {
+                it.status == "searching" ||
+                        it.status == "in_progress" ||
+                        it.status == "accepted"
+            }
 
             // Aba 1: Concluídos ou Cancelados
-            1 -> todosPedidos.filter { it.status == "completed" || it.status == "canceled" }
+            1 -> todosPedidos.filter {
+                it.status == "completed" ||
+                        it.status == "canceled"
+            }
 
             else -> emptyList()
         }
 
         adapter.atualizarLista(listaFiltrada)
+    }
+
+    // MATA O RELÓGIO QUANDO O USUÁRIO FECHAR A TELA PARA NÃO GASTAR BATERIA
+    override fun onDestroy() {
+        super.onDestroy()
+        jobPolling?.cancel()
     }
 }

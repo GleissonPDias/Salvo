@@ -71,16 +71,41 @@
             android:background="@color/salvo_linha_divisoria"
             app:layout_constraintTop_toBottomOf="@id/iv_icone_servico" />
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_foto_prestador"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="centerCrop"
+            app:cornerSize="8dp"
+            android:src="@drawable/logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linha_separadora" />
+
         <TextView
             android:id="@+id/tv_nome_prestador"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="12dp"
             android:text="Carlos Borracharia"
             android:textColor="@color/salvo_texto_principal"
             android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/linha_separadora" />
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_preco"
+            app:layout_constraintStart_toEndOf="@id/iv_foto_prestador"
+            app:layout_constraintTop_toTopOf="@id/iv_foto_prestador" />
+
+        <TextView
+            android:id="@+id/tv_veiculo_prestador"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Guincho Plataforma • ABC-1234"
+            android:textColor="@color/salvo_texto_secundario"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/tv_nome_prestador"
+            app:layout_constraintEnd_toStartOf="@+id/tv_preco"
+            app:layout_constraintTop_toBottomOf="@id/tv_nome_prestador" />
 
         <TextView
             android:id="@+id/tv_preco"
@@ -90,9 +115,9 @@
             android:textColor="@color/salvo_texto_principal"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/tv_nome_prestador"
+            app:layout_constraintBottom_toBottomOf="@id/iv_foto_prestador"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_nome_prestador" />
+            app:layout_constraintTop_toTopOf="@id/iv_foto_prestador" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_acao_pedido"
@@ -104,7 +129,7 @@
             android:textSize="16sp"
             android:textColor="@color/salvo_azul_neon"
             app:strokeColor="@color/salvo_azul_neon"
-            app:layout_constraintTop_toBottomOf="@id/tv_nome_prestador" />
+            app:layout_constraintTop_toBottomOf="@id/iv_foto_prestador" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
