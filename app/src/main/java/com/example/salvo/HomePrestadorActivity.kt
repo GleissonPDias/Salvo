@@ -27,10 +27,11 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
-import com.example.salvo.adapter.RecentActivity
+
 import com.example.salvo.adapter.RecentActivityAdapter
 import com.example.salvo.model.AceitarPedidoRequestApp
 import com.example.salvo.model.AceitarPedidoResponse
+import com.example.salvo.model.ServiceRequest
 import com.example.salvo.network.WebSocketManager
 
 class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -46,6 +47,8 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
     private var pedidoAtualId: Int = -1
     private var pedidoAtualPreco: Double = 0.0
     private var pedidoAtualDistancia: Double = 0.0
+
+    private lateinit var adapterAtividades: RecentActivityAdapter
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -82,12 +85,39 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupRecyclerView() {
-        val dadosFigma = listOf(
-            RecentActivity(1, "Carlos Silva", "Towing Service", "2.5km", "R$ 120", "14:30"),
-            RecentActivity(2, "Mariana Costa", "Battery Jump", "4.1km", "R$ 80", "11:15")
-        )
+        // Inicializa o adapter VAZIO (evita o crash)
+        adapterAtividades = RecentActivityAdapter(emptyList())
         binding.rvAtividadesRecentes.layoutManager = LinearLayoutManager(this)
-        binding.rvAtividadesRecentes.adapter = RecentActivityAdapter(dadosFigma)
+        binding.rvAtividadesRecentes.adapter = adapterAtividades
+
+        // Inicia a busca de dados na API (usando o ID da oficina logada)
+        if (currentUserId != -1) {
+            carregarHistoricoDaOficina()
+        }
+    }
+
+    private fun carregarHistoricoDaOficina() {
+        // Altere a rota "listarPedidos" para a rota exata que você criou na sua Interface Retrofit
+        // para buscar o histórico da oficina (algo como `obterHistoricoOficina`).
+        RetrofitClient.apiService.obterHistoricoOficina(currentUserId).enqueue(object : retrofit2.Callback<List<ServiceRequest>> {
+            override fun onResponse(call: retrofit2.Call<List<ServiceRequest>>, response: retrofit2.Response<List<ServiceRequest>>) {
+                if (response.isSuccessful) {
+                    val listaHistorico = response.body()
+
+                    if (listaHistorico != null && listaHistorico.isNotEmpty()) {
+                        // Mágica! A lista foi encontrada e o adapter se atualiza sozinho
+                        adapterAtividades.atualizarLista(listaHistorico)
+                    } else {
+                        // Lista veio vazia (a oficina nunca atendeu ninguém)
+                        adapterAtividades.atualizarLista(emptyList())
+                    }
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<List<ServiceRequest>>, t: Throwable) {
+                android.util.Log.e("HOME_PRESTADOR", "Erro ao carregar histórico: ${t.message}")
+            }
+        })
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

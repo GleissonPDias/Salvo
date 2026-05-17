@@ -127,6 +127,9 @@ interface ApiService {
         @Path("id") requestId: Int
     ): Call<PollingStatusResponse>
 
+    @GET("listar-pedidos-oficina") // O nome da rota que você fez no Ktor
+    fun obterHistoricoOficina(@Query("providerId") providerId: Int): Call<List<ServiceRequest>>
+
 }
 
 // 2. O Singleton (O único "telefone" do aplicativo)
