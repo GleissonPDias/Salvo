@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
-    android:id="@+id/main"
-    app:cardBackgroundColor="@color/salvo_card_fundo"
+    app:cardBackgroundColor="#2E3947"
     app:cardCornerRadius="16dp"
-    app:strokeColor="@color/salvo_linha_divisoria"
-    app:strokeWidth="1dp">
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,117 +18,133 @@
 
         <ImageView
             android:id="@+id/iv_icone_servico"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/logo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_menu_directions"
+            app:tint="#F39C12"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/salvo_azul_neon" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_nome_servico"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="S.O.S. Borracharia"
-            android:textColor="@color/salvo_texto_principal"
+            android:layout_marginStart="12dp"
+            tools:text="Guincho"
+            android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/tv_status_pedido"
+            app:layout_constraintBottom_toBottomOf="@id/iv_icone_servico"
             app:layout_constraintStart_toEndOf="@id/iv_icone_servico"
             app:layout_constraintTop_toTopOf="@id/iv_icone_servico" />
+
+        <TextView
+            android:id="@+id/tv_data_hora"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="24/05/2026 15:30"
+            android:textColor="#B0BEC5"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_status_pedido"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Concluído"
-            android:textColor="@color/salvo_laranja"
+            android:layout_marginTop="4dp"
+            tools:text="A CAMINHO"
+            android:textColor="#4CAF50"
             android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_nome_servico" />
-
-        <TextView
-            android:id="@+id/tv_data_hora"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="12 Mai 2026 • 14:30"
-            android:textColor="@color/salvo_texto_secundario"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/tv_nome_servico"
-            app:layout_constraintStart_toStartOf="@id/tv_nome_servico"
-            app:layout_constraintTop_toBottomOf="@id/tv_nome_servico" />
+            app:layout_constraintTop_toBottomOf="@id/tv_data_hora" />
 
         <View
-            android:id="@+id/linha_separadora"
+            android:id="@+id/linha_1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/salvo_linha_divisoria"
+            android:layout_marginTop="12dp"
+            android:background="#1F2B38"
             app:layout_constraintTop_toBottomOf="@id/iv_icone_servico" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_foto_prestador"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:scaleType="centerCrop"
-            app:cornerSize="8dp"
-            android:src="@drawable/logo"
+            android:background="#1F2B38"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/linha_separadora" />
+            app:layout_constraintTop_toBottomOf="@id/linha_1" />
 
         <TextView
             android:id="@+id/tv_nome_prestador"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:text="Carlos Borracharia"
-            android:textColor="@color/salvo_texto_principal"
-            android:textSize="14sp"
+            android:layout_marginTop="12dp"
+            tools:text="Auto Elétrica Central"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/tv_preco"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_foto_prestador"
-            app:layout_constraintTop_toTopOf="@id/iv_foto_prestador" />
+            app:layout_constraintTop_toBottomOf="@id/linha_1" />
 
         <TextView
             android:id="@+id/tv_veiculo_prestador"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Guincho Plataforma • ABC-1234"
-            android:textColor="@color/salvo_texto_secundario"
-            android:textSize="12sp"
+            android:layout_marginTop="2dp"
+            tools:text="Guincho Plataforma • ABC-1234"
+            android:textColor="#B0BEC5"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/tv_nome_prestador"
-            app:layout_constraintEnd_toStartOf="@+id/tv_preco"
             app:layout_constraintTop_toBottomOf="@id/tv_nome_prestador" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_prestador"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="iv_foto_prestador,tv_nome_prestador,tv_veiculo_prestador" />
+
+        <View
+            android:id="@+id/linha_2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="#1F2B38"
+            app:layout_constraintTop_toBottomOf="@id/barrier_prestador" />
 
         <TextView
             android:id="@+id/tv_preco"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="R$ 45,00"
-            android:textColor="@color/salvo_texto_principal"
-            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            tools:text="R$ 150,00"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/iv_foto_prestador"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/iv_foto_prestador" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linha_2" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_acao_pedido"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Pedir Novamente"
-            android:textSize="16sp"
-            android:textColor="@color/salvo_azul_neon"
-            app:strokeColor="@color/salvo_azul_neon"
-            app:layout_constraintTop_toBottomOf="@id/iv_foto_prestador" />
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            tools:text="Pedir Novamente"
+            android:textSize="12sp"
+            app:backgroundTint="#F39C12"
+            app:cornerRadius="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linha_2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/salvo_fundo"
+    android:background="#1F2B38"
     tools:context=".MeusPedidosActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -15,9 +15,9 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@android:color/transparent"
         app:navigationIcon="@drawable/ic_arrow_back"
-        app:navigationIconTint="@color/salvo_texto_principal"
+        app:navigationIconTint="#FFFFFF"
         app:title="Meus Pedidos"
-        app:titleTextColor="@color/salvo_texto_principal"
+        app:titleTextColor="#FFFFFF"
         app:titleCentered="true"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,9 +26,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        app:tabIndicatorColor="@color/salvo_laranja"
-        app:tabSelectedTextColor="@color/salvo_laranja"
-        app:tabTextColor="@color/salvo_texto_secundario"
+        app:tabIndicatorColor="#F39C12"
+        app:tabSelectedTextColor="#F39C12"
+        app:tabTextColor="#B0BEC5"
         app:layout_constraintTop_toBottomOf="@id/toolbar_pedidos">
 
         <com.google.android.material.tabs.TabItem
@@ -51,8 +51,20 @@
         android:paddingTop="8dp"
         android:paddingBottom="24dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tab_layout_pedidos"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_cliente"
         tools:listitem="@layout/item_pedido" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_cliente"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#111923"
+        app:itemIconTint="#F39C12"
+        app:itemTextColor="#FFFFFF"
+        app:menu="@menu/bottom_nav_cliente"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

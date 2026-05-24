@@ -70,6 +70,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".PerfilClienteActivity" android:exported="false" />
+
+        <activity android:name=".MeusVeiculosActivity" android:exported="false" />
     </application>
 
 </manifest>

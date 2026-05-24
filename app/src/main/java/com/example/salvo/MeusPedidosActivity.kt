@@ -1,5 +1,6 @@
 package com.example.salvo
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.salvo.adapter.PedidosAdapter
 import com.example.salvo.model.ServiceRequest
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -31,8 +33,9 @@ class MeusPedidosActivity : AppCompatActivity() {
     // Guarda a lista completa que vem da API do Render
     private var todosPedidos: List<ServiceRequest> = emptyList()
 
-    // ID do usuário logado
+    // ID do usuário logado e Nome (para navegação)
     private var userIdLogado = -1
+    private var nomeUsuario = ""
 
     // VARIÁVEL DO RELÓGIO (POLLING)
     private var jobPolling: Job? = null
@@ -42,7 +45,9 @@ class MeusPedidosActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_meus_pedidos)
 
+        // Recebe os dados
         userIdLogado = intent.getIntExtra("USER_ID", -1)
+        nomeUsuario = intent.getStringExtra("NOME_USUARIO") ?: "Cliente"
 
         if (userIdLogado == -1) {
             Toast.makeText(this, "Erro: Usuário não identificado", Toast.LENGTH_SHORT).show()
@@ -53,6 +58,9 @@ class MeusPedidosActivity : AppCompatActivity() {
         configurarSistemaEWindowInsets()
         configurarToolbar()
         inicializarComponentes()
+
+        // Configura a barra inferior
+        configurarBottomNavigation()
 
         // INICIA O RELÓGIO ASSIM QUE A TELA ABRE
         iniciarPollingDaLista()
@@ -101,6 +109,43 @@ class MeusPedidosActivity : AppCompatActivity() {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
+    }
+
+    // ==========================================
+    // LÓGICA DA BARRA DE NAVEGAÇÃO
+    // ==========================================
+    private fun configurarBottomNavigation() {
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation_cliente)
+
+        // 🚀 Isso garante que o ícone de Pedidos (Relógio) fique aceso!
+        bottomNav.selectedItemId = R.id.nav_pedidos
+
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    val intent = Intent(this, MainScreenActivity::class.java)
+                    intent.putExtra("USER_ID", userIdLogado)
+                    intent.putExtra("NOME_USUARIO", nomeUsuario)
+                    startActivity(intent)
+                    finish()
+                    true
+                }
+                R.id.nav_pedidos -> true // Já estamos aqui, não faz nada
+                R.id.nav_chat -> {
+                    Toast.makeText(this, "Em breve: Chat!", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.nav_perfil -> {
+                    val intent = Intent(this, PerfilClienteActivity::class.java)
+                    intent.putExtra("USER_ID", userIdLogado)
+                    intent.putExtra("NOME_USUARIO", nomeUsuario)
+                    startActivity(intent)
+                    finish()
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     // A FUNÇÃO MÁGICA QUE ATUALIZA A TELA SOZINHA

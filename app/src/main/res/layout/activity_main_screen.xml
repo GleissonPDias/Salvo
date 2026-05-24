@@ -1,328 +1,245 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/salvo_fundo"
-    android:padding="24dp"
+    android:background="#1F2B38"
     tools:context=".MainScreenActivity">
 
     <TextView
-        android:id="@+id/tv_boas_vindas"
+        android:id="@+id/tv_logo_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
-        android:text="Boas-vindas, Usuário!"
-        android:textColor="@color/salvo_texto_principal"
-        android:textSize="26sp"
+        android:text="SALVÔ"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
         android:textStyle="bold"
+        android:letterSpacing="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/iv_notificacao"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="24dp"
+        android:src="@android:drawable/ic_popup_reminder"
+        app:tint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@id/tv_logo_top"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_logo_top" />
+
     <TextView
-        android:id="@+id/tv_subtitulo_home"
+        android:id="@+id/tv_saudacao"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="O que você precisa hoje?"
-        android:textColor="@color/salvo_texto_secundario"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@id/tv_boas_vindas"
-        app:layout_constraintTop_toBottomOf="@id/tv_boas_vindas" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_pedir_socorro"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="PEDIR SOCORRO AGORA"
-        android:textSize="18sp"
+        android:text="Olá, Cliente!"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
         android:textStyle="bold"
-        app:backgroundTint="#D32F2F"
-        app:cornerRadius="12dp"
-        app:icon="@android:drawable/ic_dialog_alert"
-        app:iconGravity="textStart"
-        app:layout_constraintTop_toBottomOf="@id/tv_subtitulo_home"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/tv_logo_top" />
+
+    <TextView
+        android:id="@+id/tv_pergunta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
+        android:text="Do que você precisa hoje?"
+        android:textColor="#B0BEC5"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_saudacao" />
 
     <LinearLayout
-        android:id="@+id/container_cards"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_logoff"
-        app:layout_constraintTop_toBottomOf="@id/btn_pedir_socorro">
+        android:id="@+id/ll_servicos"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_pergunta">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_perfil"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginVertical="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="@color/salvo_card_fundo"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            app:strokeColor="@color/salvo_linha_divisoria"
-            app:strokeWidth="1dp">
+        <LinearLayout
+            android:id="@+id/btn_guincho"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_input"
+                android:padding="12dp"
+                android:src="@android:drawable/ic_menu_directions"
+                app:tint="#F39C12"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Guincho"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp">
+        <LinearLayout
+            android:id="@+id/btn_bateria"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_input"
+                android:padding="12dp"
+                android:src="@android:drawable/ic_lock_idle_charging"
+                app:tint="#F39C12"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Bateria"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/iv_icone_perfil"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/logo"
-                    app:tint="#F59E0B"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:id="@+id/btn_pneu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_input"
+                android:padding="12dp"
+                android:src="@android:drawable/ic_menu_compass"
+                app:tint="#F39C12"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Pneu"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_titulo_card_perfil"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Perfil da Oficina"
-                    android:textColor="@color/salvo_texto_principal"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_perfil"
-                    app:layout_constraintStart_toEndOf="@id/iv_icone_perfil"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed" />
-
-                <TextView
-                    android:id="@+id/tv_desc_perfil"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Gerencie seus dados e fotos"
-                    android:textColor="@color/salvo_texto_secundario"
-                    android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="@+id/tv_titulo_card_perfil"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_titulo_card_perfil" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_arrow_back"
-                    android:rotation="180"
-                    app:tint="@color/salvo_texto_secundario"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_pedidos"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginVertical="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="@color/salvo_card_fundo"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            app:strokeColor="@color/salvo_linha_divisoria"
-            app:strokeWidth="1dp">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp">
-
-                <ImageView
-                    android:id="@+id/iv_icone_pedidos"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/logo"
-                    app:tint="@color/salvo_azul_neon"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_titulo_card_pedidos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Meus Pedidos"
-                    android:textColor="@color/salvo_texto_principal"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_pedidos"
-                    app:layout_constraintStart_toEndOf="@id/iv_icone_pedidos"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed" />
-
-                <TextView
-                    android:id="@+id/tv_desc_pedidos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Histórico de serviços"
-                    android:textColor="@color/salvo_texto_secundario"
-                    android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="@+id/tv_titulo_card_pedidos"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_titulo_card_pedidos" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_arrow_back"
-                    android:rotation="180"
-                    app:tint="@color/salvo_texto_secundario"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_avaliacao"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginVertical="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="@color/salvo_card_fundo"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            app:strokeColor="@color/salvo_linha_divisoria"
-            app:strokeWidth="1dp">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp">
-
-                <ImageView
-                    android:id="@+id/iv_icone_avaliacao"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/logo"
-                    app:tint="@color/salvo_laranja"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_titulo_card_avaliacao"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Avaliar Serviço"
-                    android:textColor="@color/salvo_texto_principal"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_avaliacao"
-                    app:layout_constraintStart_toEndOf="@id/iv_icone_avaliacao"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed" />
-
-                <TextView
-                    android:id="@+id/tv_desc_avaliacao"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dê sua nota ao mecânico"
-                    android:textColor="@color/salvo_texto_secundario"
-                    android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="@+id/tv_titulo_card_avaliacao"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_titulo_card_avaliacao" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_arrow_back"
-                    android:rotation="180"
-                    app:tint="@color/salvo_texto_secundario"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_sobre"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginVertical="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="@color/salvo_card_fundo"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            app:strokeColor="@color/salvo_linha_divisoria"
-            app:strokeWidth="1dp">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp">
-
-                <ImageView
-                    android:id="@+id/iv_icone_sobre"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/logo"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_titulo_card_sobre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Sobre o Salvô"
-                    android:textColor="@color/salvo_texto_principal"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_sobre"
-                    app:layout_constraintStart_toEndOf="@id/iv_icone_sobre"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed" />
-
-                <TextView
-                    android:id="@+id/tv_desc_sobre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Termos e missão"
-                    android:textColor="@color/salvo_texto_secundario"
-                    android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="@+id/tv_titulo_card_sobre"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_titulo_card_sobre" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_arrow_back"
-                    android:rotation="180"
-                    app:tint="@color/salvo_texto_secundario"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-
+        <LinearLayout
+            android:id="@+id/btn_mecanica"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_input"
+                android:padding="12dp"
+                android:src="@android:drawable/ic_menu_manage"
+                app:tint="#F39C12"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Mecânica"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_logoff"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_mapa"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_servicos"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_cliente">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_mapa"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="16dp">
+
+            <fragment
+                android:id="@+id/map_view"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_endereco_flutuante"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_margin="16dp"
+            app:cardBackgroundColor="#2E3947"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/ic_menu_mylocation"
+                    app:tint="#F39C12" />
+
+                <TextView
+                    android:id="@+id/tv_endereco_atual"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="A obter a sua localização atual..."
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:ellipsize="end"
+                    android:singleLine="true"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_cliente"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Deslogar (Sair)"
-        android:textSize="16sp"
-        android:textColor="@color/salvo_laranja"
-        app:iconTint="@color/salvo_laranja"
+        android:background="#111923"
+        app:itemIconTint="#F39C12"
+        app:itemTextColor="#FFFFFF"
+        app:menu="@menu/bottom_nav_cliente"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
