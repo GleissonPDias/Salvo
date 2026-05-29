@@ -3,80 +3,135 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#1C212E"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="20dp"
+    android:background="#1E232D">
 
     <View
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="4dp"
+        android:background="#4A5568"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp"
-        android:background="#6B7280" />
+        android:layout_marginBottom="16dp"/>
 
     <TextView
+        android:id="@+id/tv_titulo_dialog_veiculo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Novo Veículo"
+        android:text="Cadastrar Novo Veículo"
+        android:textSize="18sp"
+        android:textStyle="bold"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_marginBottom="20dp" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_foto_novo_veiculo"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="24dp"
-        app:cardBackgroundColor="#242A38"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="#2A303C"
         app:cardCornerRadius="12dp"
-        app:strokeColor="#F59E0B"
-        app:strokeWidth="1dp">
+        app:strokeWidth="1dp"
+        app:strokeColor="#FF9800">
+
         <ImageView
             android:id="@+id/iv_preview_foto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerInside"
             android:src="@android:drawable/ic_menu_camera"
-            app:tint="#6B7280" />
+            app:tint="#9E9E9E"
+            android:scaleType="center"
+            android:contentDescription="Preview da foto" />
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:hint="Nome (ex: Guincho Plataforma)"
-        android:textColorHint="#9CA3AF"
-        app:hintTextColor="#F59E0B">
+        android:layout_marginBottom="12dp"
+        app:hintTextColor="#FF9800"
+        android:textColorHint="#9E9E9E"
+        app:boxStrokeColor="#FF9800">
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_nome_veiculo"
+            android:id="@+id/et_marca_veiculo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF" />
+            android:hint="Marca (ex: Fiat, Chevrolet)"
+            android:textColor="#FFFFFF"
+            android:inputType="textCapWords" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="Placa"
-        app:hintTextColor="#F59E0B">
+        android:layout_marginBottom="12dp"
+        app:hintTextColor="#FF9800"
+        android:textColorHint="#9E9E9E"
+        app:boxStrokeColor="#FF9800">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_nome_veiculo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Modelo (ex: STRADA, S10)"
+            android:textColor="#FFFFFF"
+            android:inputType="textCapCharacters" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        app:hintTextColor="#FF9800"
+        android:textColorHint="#9E9E9E"
+        app:boxStrokeColor="#FF9800">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_placa_veiculo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapCharacters"
-            android:textColor="#FFFFFF" />
+            android:hint="Placa"
+            android:textColor="#FFFFFF"
+            android:inputType="textCapCharacters" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        app:hintTextColor="#FF9800"
+        android:textColorHint="#9E9E9E"
+        app:boxStrokeColor="#FF9800">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_tipo_veiculo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tipo (ex: Guincho, Moto)"
+            android:textColor="#FFFFFF"
+            android:inputType="textCapWords" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        app:hintTextColor="#FF9800"
+        android:textColorHint="#9E9E9E"
+        app:boxStrokeColor="#FF9800">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_data_manutencao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Próxima Manutenção (DD/MM/AAAA)"
+            android:textColor="#FFFFFF"
+            android:inputType="date" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_salvar_veiculo"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="32dp"
+        android:layout_height="52dp"
         android:text="CADASTRAR VEÍCULO"
-        android:textColor="#000000"
-        app:backgroundTint="#F59E0B"
-        app:cornerRadius="12dp" />
+        android:textColor="#1E232D"
+        android:textStyle="bold"
+        app:backgroundTint="#FF9800"
+        app:cornerRadius="8dp" />
 
 </LinearLayout>

@@ -23,6 +23,11 @@
             android:value="AIzaSyDXqV98pRQpyjpc0jXT47VAhks7iLncCZg" />
 
         <activity
+            android:name=".StatusVeiculoActivity"
+            android:exported="false"
+            />
+
+        <activity
             android:name=".HomePrestadorActivity"
             android:exported="false" />
 

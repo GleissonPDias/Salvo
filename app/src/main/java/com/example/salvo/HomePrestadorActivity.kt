@@ -85,12 +85,14 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupRecyclerView() {
-        // Inicializa o adapter VAZIO (evita o crash)
-        adapterAtividades = RecentActivityAdapter(emptyList())
+        // Inicializa o adapter passando o que deve acontecer ao clicar num item
+        adapterAtividades = RecentActivityAdapter(emptyList()) { pedidoClicado ->
+            abrirDialogoDetalhesPedido(pedidoClicado)
+        }
+
         binding.rvAtividadesRecentes.layoutManager = LinearLayoutManager(this)
         binding.rvAtividadesRecentes.adapter = adapterAtividades
 
-        // Inicia a busca de dados na API (usando o ID da oficina logada)
         if (currentUserId != -1) {
             carregarHistoricoDaOficina()
         }
@@ -328,5 +330,69 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onDestroy() {
         super.onDestroy()
         socketManager?.desconectar()
+    }
+
+    // --- GESTÃO DE STATUS DO PEDIDO ---
+    private fun abrirDialogoDetalhesPedido(pedido: ServiceRequest) {
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(this, R.style.Theme_Salvo)
+        val view = layoutInflater.inflate(R.layout.layout_dialog_detalhes_pedido, null)
+        dialog.setContentView(view)
+
+        val tvTitulo = view.findViewById<android.widget.TextView>(R.id.tv_detalhes_titulo)
+        val tvServico = view.findViewById<android.widget.TextView>(R.id.tv_detalhes_servico)
+        val tvPreco = view.findViewById<android.widget.TextView>(R.id.tv_detalhes_preco)
+        val tvDistancia = view.findViewById<android.widget.TextView>(R.id.tv_detalhes_distancia)
+        val btnAlterarStatus = view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_alterar_status_pedido)
+
+        tvTitulo.text = "Chamado #${pedido.id}"
+        tvServico.text = "Serviço: ${pedido.serviceType}"
+
+        val preco = pedido.finalPrice ?: 0.0
+        tvPreco.text = "Valor Total: R$ ${String.format("%.2f", preco).replace(".", ",")}"
+
+        val distancia = pedido.finalDistance ?: 0.0
+        tvDistancia.text = "Distância Percorrida: ${String.format("%.1f", distancia).replace(".", ",")} km"
+
+        btnAlterarStatus.setOnClickListener {
+            dialog.dismiss() // Fecha os detalhes
+            abrirMenuAlterarStatus(pedido) // Abre o menu de Status
+        }
+
+        dialog.show()
+    }
+
+    private fun abrirMenuAlterarStatus(pedido: ServiceRequest) {
+        // Opções de status que o motorista de guincho pode reportar
+        val opcoesStatus = arrayOf("A Caminho", "No Local", "Em Andamento", "Finalizado", "Cancelado")
+
+        androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_Salvo)
+            .setTitle("Atualizar Status da Viagem")
+            .setItems(opcoesStatus) { _, which ->
+                val novoStatus = opcoesStatus[which]
+                enviarNovoStatusParaAPI(pedido.id, novoStatus)
+            }
+            .setNegativeButton("Fechar", null)
+            .show()
+    }
+
+    private fun enviarNovoStatusParaAPI(pedidoId: Int, novoStatus: String) {
+        val dados = mapOf(
+            "status" to novoStatus,
+            "provider_id" to currentUserId.toString()
+        )
+
+        RetrofitClient.apiService.atualizarStatusPedido(pedidoId, dados).enqueue(object : retrofit2.Callback<com.example.salvo.model.AuthResponse> {
+            override fun onResponse(call: retrofit2.Call<com.example.salvo.model.AuthResponse>, response: retrofit2.Response<com.example.salvo.model.AuthResponse>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@HomePrestadorActivity, "Status atualizado para: $novoStatus", Toast.LENGTH_SHORT).show()
+                    carregarHistoricoDaOficina() // Recarrega a lista para mostrar atualizado
+                } else {
+                    Toast.makeText(this@HomePrestadorActivity, "Erro ao atualizar status.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: retrofit2.Call<com.example.salvo.model.AuthResponse>, t: Throwable) {
+                Toast.makeText(this@HomePrestadorActivity, "Falha de conexão com a API.", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

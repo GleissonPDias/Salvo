@@ -7,84 +7,252 @@
     android:layout_height="match_parent"
     android:background="@drawable/background"
     tools:context=".RegisterChooseActivity">
-    
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="40dp"
 
-        android:src="@drawable/logo"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <!-- CONTAINER -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/containerOptions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="40dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="8dp"
-        app:cardBackgroundColor="@color/formLoginDark"
-        app:layout_constraintTop_toBottomOf="@id/logo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Conteúdo interno -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:padding="20dp">
 
-            android:padding="40dp">
+            <!-- LOGO -->
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="24dp"
+                android:src="@drawable/logo"
+                android:contentDescription="@string/app_name" />
 
-
+            <!-- TÍTULO PRINCIPAL -->
             <TextView
-                android:id="@+id/text_choose_option"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Escolha uma opção para continuar"
-                android:textSize="18sp"
+                android:text="Bem-vindo ao Salvo!"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:textColor="@color/black"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="24dp"/>
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="8dp" />
 
-
-
-            <!-- BOTÃO 1 -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_user"
+            <!-- SUBTÍTULO -->
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@color/editTxtBg"
-                android:text="Sou usuário"
-                android:textSize="18sp"
-                android:drawableLeft="@drawable/ic_driver"
-                android:textColor="@color/black"
-                android:layout_marginBottom="12dp"/>
+                android:text="Escolha como deseja se cadastrar"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginBottom="32dp" />
 
-            <!-- BOTÃO 2 -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_company"
+            <!-- CARD 1: USUÁRIO/CLIENTE -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_mechanic"
-                android:text="Sou empresa"
-                android:textSize="18sp"
-                android:textColor="@color/black"
-                app:backgroundTint="@color/editTxtBg"
-               />
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:clickable="true"
+                android:foreground="?selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- ÍCONE -->
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="12dp"
+                        android:src="@drawable/ic_driver"
+                        android:contentDescription="@string/app_name" />
+
+                    <!-- TÍTULO -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="👤 Sou Usuário"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@android:color/black"
+                        android:layout_marginBottom="8dp" />
+
+                    <!-- DESCRIÇÃO -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cadastre-se como cliente para solicitar serviços de emergência na estrada"
+                        android:textSize="13sp"
+                        android:gravity="center"
+                        android:textColor="@android:color/darker_gray"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- BENEFÍCIOS -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:background="@drawable/bg_card_light">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Chamadas de emergência rápidas"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/black"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Rastreamento de ajuda em tempo real"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/black"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Avaliação de prestadores"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/black" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CARD 2: EMPRESA/PRESTADOR -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_company"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:clickable="true"
+                android:foreground="?selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- ÍCONE -->
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="12dp"
+                        android:src="@drawable/ic_mechanic"
+                        android:contentDescription="@string/app_name" />
+
+                    <!-- TÍTULO -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🏢 Sou Empresa"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@android:color/black"
+                        android:layout_marginBottom="8dp" />
+
+                    <!-- DESCRIÇÃO -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cadastre sua oficina ou empresa de reboque para oferecer serviços de emergência"
+                        android:textSize="13sp"
+                        android:gravity="center"
+                        android:textColor="@android:color/darker_gray"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- BENEFÍCIOS -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:background="@drawable/bg_card_light">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Receba pedidos de clientes"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/black"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Gerencie sua frota"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/black"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓ Configure seus serviços e preços"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/black" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- BOTÕES -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_user"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Sou Usuário"
+                    android:textColor="@android:color/white"
+                    android:layout_marginEnd="8dp"
+                    app:backgroundTint="@color/salvo_primaria" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_company"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Sou Empresa"
+                    android:textColor="@android:color/white"
+                    android:layout_marginStart="8dp"
+                    app:backgroundTint="@color/salvo_secundaria" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
-
-
-
-
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

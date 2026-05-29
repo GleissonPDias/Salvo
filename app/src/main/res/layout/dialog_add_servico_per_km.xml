@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Adicionar Serviço por Km/Hora"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ideal para serviços que dependem da distância ou tempo"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginBottom="20dp" />
+
+    <!-- EXEMPLO DE USO -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="@drawable/bg_card_light"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_info"
+            android:contentDescription="@string/app_name"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Exemplo: Reboque = R$ 5,00/km + R$ 20,00/hora\n\nPreço varia conforme distância e tempo."
+            android:textSize="12sp"
+            android:textColor="@android:color/black" />
+
+    </LinearLayout>
+
+    <!-- NOME DO SERVIÇO -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:boxBackgroundMode="filled">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_nome_servico_km"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome do Serviço"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- SEÇÃO: PREÇO POR KM -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Preço por Quilômetro"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="12dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:boxBackgroundMode="filled">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_preco_km"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="R$ por km"
+            android:inputType="numberDecimal"
+            android:drawableLeft="@drawable/ic_money"
+            android:drawablePadding="8dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- SEÇÃO: PREÇO POR HORA -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Preço por Hora"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="8dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        app:boxBackgroundMode="filled">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_preco_hora"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="R$ por hora"
+            android:inputType="numberDecimal"
+            android:drawableLeft="@drawable/ic_money"
+            android:drawablePadding="8dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- AVISO -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="@drawable/bg_card_light"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_alert"
+            android:contentDescription="@string/app_name"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ambos os preços são opcionais. Se deixar um em branco, será cobrado apenas o outro."
+            android:textSize="12sp"
+            android:textColor="@android:color/black" />
+
+    </LinearLayout>
+
+    <!-- BOTÕES -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancelar_km"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Cancelar"
+            android:textColor="@color/salvo_primaria"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_salvar_km"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Salvar Serviço"
+            android:textColor="@android:color/white"
+            android:layout_marginStart="8dp"
+            app:backgroundTint="@color/salvo_primaria" />
+
+    </LinearLayout>
+
+</LinearLayout>

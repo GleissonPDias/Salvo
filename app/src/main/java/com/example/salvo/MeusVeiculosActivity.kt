@@ -77,12 +77,18 @@ class MeusVeiculosActivity : AppCompatActivity() {
         RetrofitClient.apiService.obterVeiculos(customerId).enqueue(object : Callback<List<Vehicle>> {
             override fun onResponse(call: Call<List<Vehicle>>, response: Response<List<Vehicle>>) {
                 if (response.isSuccessful) {
-                    // 👇 AQUI ESTÁ A CORREÇÃO: Transformamos a resposta em MutableList
+                    // AQUI ESTÁ A CORREÇÃO: Transformamos a resposta em MutableList
                     val lista = response.body()?.toMutableList() ?: mutableListOf()
 
-                    rvVeiculos.adapter = VehicleAdapter(lista) { veiculoClicado ->
-                        abrirDialogoCadastroEdicao(veiculoClicado)
-                    }
+                    rvVeiculos.adapter = VehicleAdapter(
+                        vehicles = lista,
+                        onVehicleClick = { veiculoClicado ->
+                            abrirDialogoCadastroEdicao(veiculoClicado)
+                        },
+                        onVehicleLongClick = { veiculoClicado ->
+                            abrirDialogoCadastroEdicao(veiculoClicado)
+                        }
+                    )
                 }
             }
             override fun onFailure(call: Call<List<Vehicle>>, t: Throwable) {
@@ -200,7 +206,9 @@ class MeusVeiculosActivity : AppCompatActivity() {
             override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder) = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
+                val position = viewHolder.bindingAdapterPosition
+                if (position == RecyclerView.NO_POSITION) return
+
                 val adapter = rvVeiculos.adapter as? VehicleAdapter
                 val veiculoAlvo = adapter?.getVehicleAt(position)
 
@@ -208,7 +216,7 @@ class MeusVeiculosActivity : AppCompatActivity() {
                     adapter.removerItem(position)
                     RetrofitClient.apiService.excluirVeiculo(veiculoAlvo.id, customerId).enqueue(object: Callback<AuthResponse>{
                         override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {}
-                        override fun onFailure(call: Call<AuthResponse>, t: Throwable) { carregarVeiculos() } // Devolve pra lista se der erro
+                        override fun onFailure(call: Call<AuthResponse>, t: Throwable) { carregarVeiculos() }
                     })
                 }
             }

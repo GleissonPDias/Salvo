@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#1E232D"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:background="#4A5568" />
+
+    <TextView
+        android:id="@+id/tv_detalhes_titulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Detalhes do Chamado"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_detalhes_servico"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Serviço: Guincho"
+        android:textColor="#9E9E9E"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_detalhes_preco"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Valor: R$ 150,00"
+        android:textColor="#FF9800"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_detalhes_distancia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="Distância: 5.2 km"
+        android:textColor="#9E9E9E"
+        android:textSize="16sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_alterar_status_pedido"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="ATUALIZAR STATUS DO PEDIDO"
+        android:textColor="#1E232D"
+        android:textStyle="bold"
+        app:backgroundTint="#FF9800"
+        app:cornerRadius="8dp" />
+
+</LinearLayout>

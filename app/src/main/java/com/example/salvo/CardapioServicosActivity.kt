@@ -2,7 +2,6 @@ package com.example.salvo
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
@@ -11,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.salvo.adapter.ServiceAdapter
+import com.example.salvo.dialog.ServicePriceModeDialog
 import com.example.salvo.model.AuthResponse
 import com.example.salvo.model.ServiceItem
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -26,18 +26,15 @@ class CardapioServicosActivity : AppCompatActivity() {
     private lateinit var rvServicos: RecyclerView
     private lateinit var tabLayout: TabLayout
 
-    // Mantemos uma referência única para o Adapter para evitar que a lista "pisque" ou suma
     private var serviceAdapter: ServiceAdapter? = null
     private var providerId: Int = -1
 
-    // Cache principal: contém TODOS os serviços (Ativos e Inativos)
     private var listaCompletaServicos: MutableList<ServiceItem> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cardapio_servicos)
 
-        // 1. Recuperação do ID com redundância
         providerId = intent.getIntExtra("USER_ID", -1)
         if (providerId == -1) providerId = intent.getIntExtra("ID", -1)
 
@@ -47,20 +44,18 @@ class CardapioServicosActivity : AppCompatActivity() {
             return
         }
 
-        // 2. Inicialização da UI
         rvServicos = findViewById(R.id.rv_servicos)
         rvServicos.layoutManager = LinearLayoutManager(this)
         tabLayout = findViewById(R.id.tab_layout_servicos)
 
         findViewById<ImageView>(R.id.btn_voltar).setOnClickListener { finish() }
+
+        // NOVO FLUXO: Ao invés de abrir o form direto, abre o seletor de tipo de preço!
         findViewById<FloatingActionButton>(R.id.fab_adicionar_servico).setOnClickListener {
-            abrirDialogoCadastroServico(null)
+            iniciarFluxoAdicionarServico()
         }
 
-        // 3. Inicializa o Adapter uma única vez (vazio)
         configurarAdapter()
-
-        // 4. Configura as abas
         configurarOuvinteDasAbas()
     }
 
@@ -92,10 +87,6 @@ class CardapioServicosActivity : AppCompatActivity() {
         })
     }
 
-    /**
-     * Filtra a lista mestre apenas pelo tipo de preço.
-     * ITENS INATIVOS CONTINUAM APARECENDO.
-     */
     private fun filtrarEExibirServicos(position: Int) {
         if (listaCompletaServicos.isEmpty()) {
             serviceAdapter?.updateList(emptyList())
@@ -103,14 +94,10 @@ class CardapioServicosActivity : AppCompatActivity() {
         }
 
         val listaFiltrada = if (position == 0) {
-            // Preço Fixo
-            listaCompletaServicos.filter { it.pricePerKm < 0.1 }
+            listaCompletaServicos.filter { it.pricePerKm < 0.1 } // Fixo
         } else {
-            // Por KM/Hora
-            listaCompletaServicos.filter { it.pricePerKm >= 0.1 }
+            listaCompletaServicos.filter { it.pricePerKm >= 0.1 } // KM
         }
-
-        // Apenas enviamos a nova lista para o adapter já existente
         serviceAdapter?.updateList(listaFiltrada)
     }
 
@@ -121,14 +108,6 @@ class CardapioServicosActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<ServiceItem>>, response: Response<List<ServiceItem>>) {
                 if (response.isSuccessful) {
                     listaCompletaServicos = response.body()?.toMutableList() ?: mutableListOf()
-                    
-                    Log.e("DEBUG_SALVO", "=== CARREGAMENTO DA API ===")
-                    Log.e("DEBUG_SALVO", "Total de serviços retornados pelo servidor: ${listaCompletaServicos.size}")
-                    listaCompletaServicos.forEach { 
-                        Log.e("DEBUG_SALVO", "-> Nome: ${it.serviceType} | Preço KM: ${it.pricePerKm} | Ativo: ${it.isActive}")
-                    }
-                    Log.e("DEBUG_SALVO", "===========================")
-
                     filtrarEExibirServicos(tabLayout.selectedTabPosition)
                 }
             }
@@ -139,25 +118,17 @@ class CardapioServicosActivity : AppCompatActivity() {
     }
 
     private fun atualizarStatusServicoNaApi(servicoId: Int, isAtivo: Boolean) {
-        // AJUSTE DE SINCRONIA: Atualiza o cache local IMEDIATAMENTE
-        // para que o item não suma ao mudar de aba
         listaCompletaServicos.find { it.id == servicoId }?.isActive = isAtivo
-
-        val dados = mapOf(
-            "provider_id" to providerId.toString(),
-            "is_active" to isAtivo.toString()
-        )
+        val dados = mapOf("provider_id" to providerId.toString(), "is_active" to isAtivo.toString())
 
         RetrofitClient.apiService.alternarStatusServico(servicoId, dados).enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                 if (!response.isSuccessful) {
-                    Log.e("DEBUG_API", "Erro no servidor ao alterar status: HTTP ${response.code()}")
                     Toast.makeText(this@CardapioServicosActivity, "Erro ao salvar status", Toast.LENGTH_SHORT).show()
-                    carregarTodosServicos() // Reverte visualmente se falhar no banco
+                    carregarTodosServicos()
                 }
             }
             override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                Log.e("DEBUG_API", "Falha na requisição de alterar status (Retrofit/Gson): ${t.message}", t)
                 carregarTodosServicos()
             }
         })
@@ -166,15 +137,24 @@ class CardapioServicosActivity : AppCompatActivity() {
     private fun deletarServicoNaApi(servicoId: Int) {
         RetrofitClient.apiService.excluirServico(servicoId, providerId).enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
-                if (response.isSuccessful) {
-                    carregarTodosServicos()
-                }
+                if (response.isSuccessful) carregarTodosServicos()
             }
             override fun onFailure(call: Call<AuthResponse>, t: Throwable) {}
         })
     }
 
-    // --- FORMULÁRIOS E DIÁLOGOS ---
+    // --- NOVO FLUXO DE DIÁLOGOS DE SERVIÇO ---
+
+    private fun iniciarFluxoAdicionarServico() {
+        val dialog = ServicePriceModeDialog(this) { mode ->
+            if (mode == "fixed") {
+                abrirDialogoPrecoFixo(null)
+            } else {
+                abrirDialogoPrecoKm(null)
+            }
+        }
+        dialog.show()
+    }
 
     private fun abrirMenuAcoesServico(servico: ServiceItem) {
         val opcoes = arrayOf("Editar Valores / Nome", "Excluir Serviço")
@@ -182,7 +162,11 @@ class CardapioServicosActivity : AppCompatActivity() {
             .setTitle(servico.serviceType)
             .setItems(opcoes) { _, which ->
                 when (which) {
-                    0 -> abrirDialogoCadastroServico(servico)
+                    0 -> {
+                        // Decide qual diálogo abrir na edição com base no preço por KM
+                        if (servico.pricePerKm > 0.1) abrirDialogoPrecoKm(servico)
+                        else abrirDialogoPrecoFixo(servico)
+                    }
                     1 -> confirmarExclusao(servico)
                 }
             }
@@ -198,45 +182,94 @@ class CardapioServicosActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun abrirDialogoCadastroServico(servicoAtual: ServiceItem?) {
+    // DIÁLOGO: PREÇO FIXO
+    private fun abrirDialogoPrecoFixo(servicoAtual: ServiceItem?) {
         val dialog = BottomSheetDialog(this)
-        val view = layoutInflater.inflate(R.layout.layout_dialog_add_servico, null)
+        val view = layoutInflater.inflate(R.layout.dialog_add_servico_fixed_price, null)
         dialog.setContentView(view)
 
-        val etNome = view.findViewById<TextInputEditText>(R.id.et_nome_servico)
-        val etPrecoBase = view.findViewById<TextInputEditText>(R.id.et_preco_base)
-        val etPrecoKm = view.findViewById<TextInputEditText>(R.id.et_preco_km)
-        val btnSalvar = view.findViewById<Button>(R.id.btn_salvar_servico)
+        val etNome = view.findViewById<TextInputEditText>(R.id.et_nome_servico_fixo)
+        val etPrecoFixo = view.findViewById<TextInputEditText>(R.id.et_preco_fixo)
+        val btnCancelar = view.findViewById<Button>(R.id.btn_cancelar_fixo)
+        val btnSalvar = view.findViewById<Button>(R.id.btn_salvar_fixo)
 
         servicoAtual?.let {
             etNome.setText(it.serviceType)
-            etPrecoBase.setText(it.basePrice.toString())
-            etPrecoKm.setText(it.pricePerKm.toString())
+            etPrecoFixo.setText(it.basePrice.toString())
             btnSalvar.text = "SALVAR ALTERAÇÕES"
         }
 
+        btnCancelar.setOnClickListener { dialog.dismiss() }
+
         btnSalvar.setOnClickListener {
             val nome = etNome.text.toString().trim()
-            val precoBaseStr = etPrecoBase.text.toString().trim().replace(",", ".")
-            val precoKmStr = etPrecoKm.text.toString().trim().replace(",", ".")
+            val precoFixoStr = etPrecoFixo.text.toString().trim().replace(",", ".")
 
-            if (nome.isNotEmpty() && precoBaseStr.isNotEmpty()) {
-                val precoBase = precoBaseStr.toDoubleOrNull() ?: 0.0
+            if (nome.isNotEmpty() && precoFixoStr.isNotEmpty()) {
+                val precoFixo = precoFixoStr.toDoubleOrNull() ?: 0.0
+                val dados = mapOf(
+                    "provider_id" to providerId.toString(),
+                    "service_type" to nome,
+                    "base_price" to precoFixo.toString(),
+                    "price_per_km" to "0.0" // Fixo não tem KM
+                )
+
+                if (servicoAtual == null) enviarNovoServicoParaApi(dados, dialog)
+                else atualizarServicoExistenteNaApi(servicoAtual.id, dados, dialog)
+            } else {
+                Toast.makeText(this, "Preencha todos os campos obrigatórios", Toast.LENGTH_SHORT).show()
+            }
+        }
+        dialog.show()
+    }
+
+    // DIÁLOGO: PREÇO POR KM / HORA
+    private fun abrirDialogoPrecoKm(servicoAtual: ServiceItem?) {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.dialog_add_servico_per_km, null)
+        dialog.setContentView(view)
+
+        val etNome = view.findViewById<TextInputEditText>(R.id.et_nome_servico_km)
+        val etPrecoKm = view.findViewById<TextInputEditText>(R.id.et_preco_km)
+        val etPrecoHora = view.findViewById<TextInputEditText>(R.id.et_preco_hora) // Mapeado como base_price na API
+        val btnCancelar = view.findViewById<Button>(R.id.btn_cancelar_km)
+        val btnSalvar = view.findViewById<Button>(R.id.btn_salvar_km)
+
+        servicoAtual?.let {
+            etNome.setText(it.serviceType)
+            etPrecoKm.setText(it.pricePerKm.toString())
+            etPrecoHora.setText(it.basePrice.toString())
+            btnSalvar.text = "SALVAR ALTERAÇÕES"
+        }
+
+        btnCancelar.setOnClickListener { dialog.dismiss() }
+
+        btnSalvar.setOnClickListener {
+            val nome = etNome.text.toString().trim()
+            val precoKmStr = etPrecoKm.text.toString().trim().replace(",", ".")
+            val precoHoraStr = etPrecoHora.text.toString().trim().replace(",", ".")
+
+            if (nome.isNotEmpty() && (precoKmStr.isNotEmpty() || precoHoraStr.isNotEmpty())) {
                 val precoKm = precoKmStr.toDoubleOrNull() ?: 0.0
+                val precoHora = precoHoraStr.toDoubleOrNull() ?: 0.0
 
                 val dados = mapOf(
                     "provider_id" to providerId.toString(),
                     "service_type" to nome,
-                    "base_price" to precoBase.toString(),
+                    "base_price" to precoHora.toString(),
                     "price_per_km" to precoKm.toString()
                 )
 
                 if (servicoAtual == null) enviarNovoServicoParaApi(dados, dialog)
                 else atualizarServicoExistenteNaApi(servicoAtual.id, dados, dialog)
+            } else {
+                Toast.makeText(this, "Preencha o nome e pelo menos um dos valores", Toast.LENGTH_SHORT).show()
             }
         }
         dialog.show()
     }
+
+    // --- MÉTODOS DE ENVIO (MANTIDOS IGUAIS) ---
 
     private fun enviarNovoServicoParaApi(dados: Map<String, String>, dialog: BottomSheetDialog) {
         RetrofitClient.apiService.adicionarServico(dados).enqueue(object : Callback<AuthResponse> {

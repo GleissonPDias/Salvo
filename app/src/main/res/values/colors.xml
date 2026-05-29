@@ -18,4 +18,8 @@
     <color name="salvo_azul_neon">#00E5FF</color>
     <color name="salvo_laranja">#FF8C00</color>
     <color name="salvo_card_fundo">#1E1E1E</color>
+
+    <!-- CORES ADICIONADAS PARA OS LAYOUTS -->
+    <color name="salvo_primaria">#FF8C00</color>
+    <color name="salvo_secundaria">#00E5FF</color>
 </resources>

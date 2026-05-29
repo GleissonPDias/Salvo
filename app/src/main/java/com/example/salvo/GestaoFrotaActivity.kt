@@ -1,5 +1,6 @@
 package com.example.salvo
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,7 +41,6 @@ class GestaoFrotaActivity : AppCompatActivity() {
     private val selecionarFotoVeiculo = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             base64Veiculo = uriToBase64(uri)
-
             currentDialogImageView?.setImageURI(uri)
             currentDialogImageView?.imageTintList = null
             currentDialogImageView?.scaleType = ImageView.ScaleType.CENTER_CROP
@@ -79,11 +80,14 @@ class GestaoFrotaActivity : AppCompatActivity() {
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
+                // ATUALIZADO: Usando bindingAdapterPosition (padrão novo do Google)
+                val position = viewHolder.bindingAdapterPosition
+                if (position == RecyclerView.NO_POSITION) return
+
                 val adapter = rvVeiculos.adapter as? VehicleAdapter
                 val veiculoAlvo = adapter?.getVehicleAt(position)
 
-                if (veiculoAlvo != null && adapter != null) {
+                if (veiculoAlvo != null) {
                     adapter.removerItem(position)
                     deletarVeiculoNoServidor(veiculoAlvo.id)
                 }
@@ -150,22 +154,28 @@ class GestaoFrotaActivity : AppCompatActivity() {
 
     // --- 2.2 EDITAR DADOS COMPLETOS ---
     private fun abrirDialogoEdicao(veiculo: Vehicle) {
-        base64Veiculo = null // Limpa para garantir que só enviaremos foto se ele escolher uma nova
+        base64Veiculo = null
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_dialog_add_veiculo, null)
         dialog.setContentView(view)
 
+        view.findViewById<TextView>(R.id.tv_titulo_dialog_veiculo)?.text = "Editar Veículo"
         val ivPreview = view.findViewById<ImageView>(R.id.iv_preview_foto)
+        val etMarca = view.findViewById<EditText>(R.id.et_marca_veiculo)
         val etNome = view.findViewById<EditText>(R.id.et_nome_veiculo)
         val etPlaca = view.findViewById<EditText>(R.id.et_placa_veiculo)
+        val etTipo = view.findViewById<EditText>(R.id.et_tipo_veiculo)
+        val etManutencao = view.findViewById<EditText>(R.id.et_data_manutencao)
         val btnSalvar = view.findViewById<Button>(R.id.btn_salvar_veiculo)
 
-        // Preenche com os dados atuais
+        // Preenche com os dados atuais vindos da API
         btnSalvar.text = "SALVAR ALTERAÇÕES"
+        etMarca.setText(veiculo.brand ?: "")
         etNome.setText(veiculo.name)
         etPlaca.setText(veiculo.plate)
+        etTipo.setText(veiculo.vehicle_type ?: "")
+        etManutencao.setText(veiculo.maintenance_date ?: "")
 
-        // Decodifica e mostra a foto atual no preview
         if (!veiculo.vehiclePhoto.isNullOrEmpty()) {
             try {
                 val imageBytes = Base64.decode(veiculo.vehiclePhoto, Base64.DEFAULT)
@@ -184,21 +194,23 @@ class GestaoFrotaActivity : AppCompatActivity() {
         }
 
         btnSalvar.setOnClickListener {
+            val marca = etMarca.text.toString().trim()
             val nome = etNome.text.toString().trim()
             val placa = etPlaca.text.toString().trim()
+            val tipo = etTipo.text.toString().trim()
+            val manutencao = etManutencao.text.toString().trim()
 
             if (nome.isNotEmpty() && placa.isNotEmpty()) {
-                val dados = mutableMapOf(
+                val dados = mutableMapOf<String, String?>(
                     "provider_id" to providerId.toString(),
                     "name" to nome,
-                    "plate" to placa
+                    "plate" to placa,
+                    "brand" to marca,
+                    "vehicle_type" to tipo,
+                    "maintenance_date" to manutencao
                 )
 
-                // Só anexa a chave de foto se uma nova foi gerada
-                val fotoAtual = base64Veiculo
-                if (fotoAtual != null) {
-                    dados["vehicle_photo"] = fotoAtual
-                }
+                base64Veiculo?.let { dados["vehicle_photo"] = it }
 
                 RetrofitClient.apiService.atualizarVeiculoCompleto(veiculo.id, dados).enqueue(object : Callback<AuthResponse> {
                     override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
@@ -221,15 +233,18 @@ class GestaoFrotaActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    // --- 3. CADASTRAR NOVO (MANTIDO INTACTO) ---
+    // --- 3. CADASTRAR NOVO VEÍCULO ---
     private fun abrirDialogoCadastro() {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.layout_dialog_add_veiculo, null)
         dialog.setContentView(view)
 
         val ivPreview = view.findViewById<ImageView>(R.id.iv_preview_foto)
+        val etMarca = view.findViewById<EditText>(R.id.et_marca_veiculo)
         val etNome = view.findViewById<EditText>(R.id.et_nome_veiculo)
         val etPlaca = view.findViewById<EditText>(R.id.et_placa_veiculo)
+        val etTipo = view.findViewById<EditText>(R.id.et_tipo_veiculo)
+        val etManutencao = view.findViewById<EditText>(R.id.et_data_manutencao)
         val btnSalvar = view.findViewById<Button>(R.id.btn_salvar_veiculo)
 
         view.findViewById<View>(R.id.card_foto_novo_veiculo).setOnClickListener {
@@ -238,18 +253,25 @@ class GestaoFrotaActivity : AppCompatActivity() {
         }
 
         btnSalvar.setOnClickListener {
+            val marca = etMarca.text.toString().trim()
             val nome = etNome.text.toString().trim()
             val placa = etPlaca.text.toString().trim()
+            val tipo = etTipo.text.toString().trim()
+            val manutencao = etManutencao.text.toString().trim()
 
             if (nome.isNotEmpty() && placa.isNotEmpty()) {
                 val dados = mapOf(
                     "provider_id" to providerId.toString(),
                     "name" to nome,
                     "plate" to placa,
+                    "brand" to marca,
+                    "vehicle_type" to tipo,
+                    "maintenance_date" to manutencao,
                     "status" to "Disponível",
                     "vehicle_photo" to base64Veiculo
                 )
 
+                // AQUI ESTÁ A CORREÇÃO (RetrofitClient em vez de caracteres estranhos)
                 RetrofitClient.apiService.adicionarVeiculo(dados).enqueue(object : Callback<AuthResponse> {
                     override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                         if (response.isSuccessful) {
@@ -278,10 +300,21 @@ class GestaoFrotaActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val lista = response.body()?.toMutableList() ?: mutableListOf()
 
-                    // Aponta o clique para o nosso novo Menu Duplo
-                    rvVeiculos.adapter = VehicleAdapter(lista) { veiculoClicado ->
-                        abrirMenuAcoesVeiculo(veiculoClicado)
-                    }
+                    // Configura as duas ações distintas para o cartão
+                    rvVeiculos.adapter = VehicleAdapter(
+                        vehicles = lista,
+                        onVehicleClick = { veiculoClicado ->
+                            // TOQUE SIMPLES: Viaja para a nova tela enviando os IDs
+                            val intent = Intent(this@GestaoFrotaActivity, StatusVeiculoActivity::class.java)
+                            intent.putExtra("USER_ID", providerId)
+                            intent.putExtra("VEICULO_ID", veiculoClicado.id)
+                            startActivity(intent)
+                        },
+                        onVehicleLongClick = { veiculoClicado ->
+                            // TOQUE LONGO: Abre o menu de edição e status rápido
+                            abrirMenuAcoesVeiculo(veiculoClicado)
+                        }
+                    )
                 }
             }
             override fun onFailure(call: Call<List<Vehicle>>, t: Throwable) {

@@ -12,8 +12,10 @@ import com.example.salvo.R
 import com.example.salvo.model.Vehicle
 
 class VehicleAdapter(
-    private val vehicles: MutableList<Vehicle>, // 1. Mudar para MutableList
-    private val onVehicleClick: (Vehicle) -> Unit // 2. Callback para o clique
+    private val vehicles: MutableList<Vehicle>,
+    private val onVehicleClick: (Vehicle) -> Unit,
+    private val onVehicleLongClick: (Vehicle) -> Unit // NOVO: Escuta o clique longo
+
 ) : RecyclerView.Adapter<VehicleAdapter.VehicleViewHolder>() {
 
     class VehicleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -35,11 +37,10 @@ class VehicleAdapter(
         holder.tvNome.text = v.name
         holder.tvPlaca.text = v.plate
 
-        // Cor do status dinâmica para ajudar na visualização rápida
         when (v.status.lowercase()) {
-            "disponível" -> holder.tvStatus.setTextColor(android.graphics.Color.parseColor("#10B981")) // Verde
-            "em atendimento" -> holder.tvStatus.setTextColor(android.graphics.Color.parseColor("#F59E0B")) // Laranja
-            else -> holder.tvStatus.setTextColor(android.graphics.Color.parseColor("#EF4444")) // Vermelho
+            "disponível" -> holder.tvStatus.setTextColor(android.graphics.Color.parseColor("#10B981"))
+            "em atendimento" -> holder.tvStatus.setTextColor(android.graphics.Color.parseColor("#F59E0B"))
+            else -> holder.tvStatus.setTextColor(android.graphics.Color.parseColor("#EF4444"))
         }
 
         if (!v.vehiclePhoto.isNullOrEmpty()) {
@@ -52,15 +53,20 @@ class VehicleAdapter(
             }
         }
 
-        // Ativa o clique no card inteiro para mudar o status
+        // Toque Simples (Abre a nova tela)
         holder.itemView.setOnClickListener {
             onVehicleClick(v)
+        }
+
+        // Toque Longo (Abre o menu de edição)
+        holder.itemView.setOnLongClickListener {
+            onVehicleLongClick(v)
+            true // Retorna 'true' para indicar que a ação longa foi consumida
         }
     }
 
     override fun getItemCount() = vehicles.size
 
-    // 3. Funções de apoio para o Swipe-to-Delete
     fun getVehicleAt(position: Int): Vehicle = vehicles[position]
 
     fun removerItem(position: Int) {

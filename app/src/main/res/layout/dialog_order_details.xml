@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#1E232D">
+
+    <!-- HEADER -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_pedido_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Pedido #12345"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/tv_status_pedido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aceito"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="#2A303C"
+            android:textColor="#FF9800" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2C2C2C"
+        android:layout_marginVertical="12dp" />
+
+    <!-- TIPO SERVICO -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_input_add"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="@string/app_name"
+            android:tint="#FFFFFF" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tipo Servico"
+                android:textSize="12sp"
+                android:textColor="#9E9E9E" />
+
+            <TextView
+                android:id="@+id/tv_tipo_servico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Troca de Oleo"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- CLIENTE -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp"
+        android:background="#2A303C">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Info Cliente"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_myplaces"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/app_name"
+                android:tint="#FF9800" />
+
+            <TextView
+                android:id="@+id/tv_nome_cliente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Joao Silva"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_call"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/app_name"
+                android:tint="#FF9800" />
+
+            <TextView
+                android:id="@+id/tv_telefone_cliente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(11) 98765-4321"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- PRESTADOR -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_rotate"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="@string/app_name"
+            android:tint="#FFFFFF" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Prestador"
+                android:textSize="12sp"
+                android:textColor="#9E9E9E" />
+
+            <TextView
+                android:id="@+id/tv_prestador_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aguardando..."
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- LOCALIZACAO -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="top"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_compass"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="2dp"
+            android:contentDescription="@string/app_name"
+            android:tint="#FFFFFF" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Local"
+                android:textSize="12sp"
+                android:textColor="#9E9E9E" />
+
+            <TextView
+                android:id="@+id/tv_endereco_servico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rua das Flores, 123"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- DESCRICAO -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp"
+        android:background="#2A303C">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Observacoes"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#9E9E9E"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tv_descricao_servico"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sem descricao"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2C2C2C"
+        android:layout_marginVertical="12dp" />
+
+    <!-- BOTOES -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_alterar_status"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Alterar Status"
+            android:textColor="#FFFFFF"
+            app:backgroundTint="#FF9800"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_contatar_cliente"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Contatar"
+            android:textColor="#FFFFFF"
+            app:backgroundTint="#2A303C"
+            app:strokeColor="#FFFFFF"
+            app:strokeWidth="2dp"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_fechar_detalhe"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Fechar"
+            android:textColor="#FF9800"
+            app:backgroundTint="#1E232D"
+            app:strokeColor="#FF9800"
+            app:strokeWidth="2dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

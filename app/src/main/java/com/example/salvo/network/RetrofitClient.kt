@@ -68,6 +68,11 @@ interface ApiService {
     @DELETE("excluir-veiculo/{id}/{providerId}")
     fun excluirVeiculo(@Path("id") id: Int, @Path("providerId") providerId: Int): Call<AuthResponse>
 
+    @PATCH("atualizar-status-pedido/{id}")
+    fun atualizarStatusPedido(
+        @Path("id") id: Int,
+        @Body dados: Map<String, String>
+    ): Call<AuthResponse>
     @PATCH("atualizar-status-veiculo/{id}")
     fun atualizarStatusVeiculo(
         @Path("id") id: Int,
