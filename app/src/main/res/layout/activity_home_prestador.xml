@@ -26,30 +26,34 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp">
 
-                <ImageView
-                    android:id="@+id/iv_logo"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_oficina_perfil"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_alignParentStart="true"
-                    android:src="@android:drawable/ic_menu_gallery" />
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/logo"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
 
                 <TextView
+                    android:id="@+id/tv_oficina_nome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/iv_logo"
+                    android:layout_toEndOf="@id/iv_oficina_perfil"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="12dp"
-                    android:text="SALVÔ"
+                    android:text="Carregando..."
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <ImageView
+                    android:id="@+id/btn_historico_pedidos"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:src="@android:drawable/ic_popup_reminder"
+                    android:src="@android:drawable/ic_menu_recent_history"
                     app:tint="#FFFFFF" />
             </RelativeLayout>
 

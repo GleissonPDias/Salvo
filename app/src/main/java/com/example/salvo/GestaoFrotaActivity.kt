@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.salvo.adapter.VehicleAdapter
 import com.example.salvo.model.AuthResponse
 import com.example.salvo.model.Vehicle
+import com.example.salvo.model.VeiculoRequest
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.ByteArrayOutputStream
@@ -173,8 +174,8 @@ class GestaoFrotaActivity : AppCompatActivity() {
         etMarca.setText(veiculo.brand ?: "")
         etNome.setText(veiculo.name)
         etPlaca.setText(veiculo.plate)
-        etTipo.setText(veiculo.vehicle_type ?: "")
-        etManutencao.setText(veiculo.maintenance_date ?: "")
+        etTipo.setText(veiculo.vehicleType ?: "")
+        etManutencao.setText(veiculo.maintenanceDate ?: "")
 
         if (!veiculo.vehiclePhoto.isNullOrEmpty()) {
             try {
@@ -201,16 +202,17 @@ class GestaoFrotaActivity : AppCompatActivity() {
             val manutencao = etManutencao.text.toString().trim()
 
             if (nome.isNotEmpty() && placa.isNotEmpty()) {
-                val dados = mutableMapOf<String, String?>(
-                    "provider_id" to providerId.toString(),
-                    "name" to nome,
-                    "plate" to placa,
-                    "brand" to marca,
-                    "vehicle_type" to tipo,
-                    "maintenance_date" to manutencao
+                val dados = VeiculoRequest(
+                    id = veiculo.id,
+                    providerId = providerId,
+                    name = nome,
+                    plate = placa,
+                    brand = marca,
+                    vehicleType = tipo,
+                    maintenanceDate = manutencao,
+                    vehiclePhoto = base64Veiculo ?: veiculo.vehiclePhoto
                 )
 
-                base64Veiculo?.let { dados["vehicle_photo"] = it }
 
                 RetrofitClient.apiService.atualizarVeiculoCompleto(veiculo.id, dados).enqueue(object : Callback<AuthResponse> {
                     override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
@@ -260,15 +262,15 @@ class GestaoFrotaActivity : AppCompatActivity() {
             val manutencao = etManutencao.text.toString().trim()
 
             if (nome.isNotEmpty() && placa.isNotEmpty()) {
-                val dados = mapOf(
-                    "provider_id" to providerId.toString(),
-                    "name" to nome,
-                    "plate" to placa,
-                    "brand" to marca,
-                    "vehicle_type" to tipo,
-                    "maintenance_date" to manutencao,
-                    "status" to "Disponível",
-                    "vehicle_photo" to base64Veiculo
+                val dados = VeiculoRequest(
+                    providerId = providerId,
+                    name = nome,
+                    plate = placa,
+                    brand = marca,
+                    vehicleType = tipo,
+                    maintenanceDate = manutencao,
+                    status = "Disponível",
+                    vehiclePhoto = base64Veiculo
                 )
 
                 // AQUI ESTÁ A CORREÇÃO (RetrofitClient em vez de caracteres estranhos)

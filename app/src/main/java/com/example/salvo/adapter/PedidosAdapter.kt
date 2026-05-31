@@ -90,10 +90,11 @@ class PedidosAdapter(
             }
 
             // 3. LÓGICA DE CORES E STATUS
+            // 3. LÓGICA DE CORES E STATUS
             when (pedido.status?.lowercase()) {
                 "searching" -> {
                     tvStatus.text = "Buscando..."
-                    tvStatus.setTextColor(android.graphics.Color.parseColor("#FF9800"))
+                    tvStatus.setTextColor(android.graphics.Color.parseColor("#FF9800")) // Laranja
 
                     tvNomePrestador.text = "Procurando oficinas..."
                     tvVeiculoPrestador.visibility = View.GONE
@@ -102,13 +103,32 @@ class PedidosAdapter(
                     btnAcao.visibility = View.GONE
                 }
 
-                "accepted", "in_progress" -> {
-                    tvStatus.text = "A CAMINHO"
-                    tvStatus.setTextColor(android.graphics.Color.parseColor("#4CAF50"))
-
+                // 🔥 AGRUPAMOS TODOS OS STATUS ATIVOS AQUI
+                "accepted", "en_route", "arrived", "in_progress" -> {
+                    // Configurações visuais em comum (Mostra a oficina, esconde o botão)
                     tvNomePrestador.text = pedido.prestadorNome ?: "Oficina Parceira"
                     tvPreco.text = precoTexto
                     btnAcao.visibility = View.GONE
+
+                    // Textos e Cores específicos para cada etapa da jornada
+                    when (pedido.status?.lowercase()) {
+                        "accepted" -> {
+                            tvStatus.text = "Confirmado"
+                            tvStatus.setTextColor(android.graphics.Color.parseColor("#10B981")) // Verde Esmeralda
+                        }
+                        "en_route" -> {
+                            tvStatus.text = "A caminho"
+                            tvStatus.setTextColor(android.graphics.Color.parseColor("#F59E0B")) // Amarelo/Laranja
+                        }
+                        "arrived" -> {
+                            tvStatus.text = "No local"
+                            tvStatus.setTextColor(android.graphics.Color.parseColor("#8B5CF6")) // Roxo
+                        }
+                        "in_progress" -> {
+                            tvStatus.text = "Em andamento"
+                            tvStatus.setTextColor(android.graphics.Color.parseColor("#3B82F6")) // Azul
+                        }
+                    }
                 }
 
                 "completed" -> {
@@ -133,6 +153,12 @@ class PedidosAdapter(
 
                     btnAcao.visibility = View.VISIBLE
                     btnAcao.text = "Tentar Novamente"
+                }
+
+                else -> {
+                    // Prevenção de falhas caso venha um status desconhecido
+                    tvStatus.text = pedido.status?.uppercase() ?: "DESCONHECIDO"
+                    tvStatus.setTextColor(android.graphics.Color.GRAY)
                 }
             }
 

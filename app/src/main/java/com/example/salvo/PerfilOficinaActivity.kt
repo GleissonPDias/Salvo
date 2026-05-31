@@ -117,6 +117,18 @@ class PerfilOficinaActivity : AppCompatActivity() {
             intent.putExtra("USER_ID", oficinaId)
             startActivity(intent)
         }
+
+        // 🔥 NOVO: Botão Sair da Conta
+        val btnSair = findViewById<MaterialButton>(R.id.btn_sair_conta)
+        btnSair.setOnClickListener {
+            val sessionManager = com.example.salvo.utils.SessionManager(this)
+            sessionManager.limparSessao()
+
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
     }
 
     // --- BUSCA DE DADOS (API) ---

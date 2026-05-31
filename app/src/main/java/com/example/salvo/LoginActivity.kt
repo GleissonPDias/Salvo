@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.salvo.model.AuthResponse
 import com.example.salvo.model.LoginRequest
+import com.example.salvo.utils.SessionManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,6 +28,26 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
+        val sessionManager = SessionManager(this)
+        val idGuardado = sessionManager.buscarUserId()
+
+        if (idGuardado != -1) {
+            val roleGuardada = sessionManager.buscarUserRole()
+            val nomeGuardado = sessionManager.buscarUserNome()
+
+            val intent = if (roleGuardada.equals("provider", ignoreCase = true)) {
+                Intent(this, HomePrestadorActivity::class.java)
+            } else {
+                Intent(this, MainScreenActivity::class.java)
+            }
+
+            intent.putExtra("USER_ID", idGuardado)
+            intent.putExtra("NOME_USUARIO", nomeGuardado)
+            startActivity(intent)
+            finish()
+            return // Impede o restante da tela de Login de carregar
+        }
+
         // Inicializando os componentes do XML
         edit_email = findViewById(R.id.edit_email)
         edit_password = findViewById(R.id.edit_password)
@@ -42,6 +63,8 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+
 
     private fun executarLogin() {
         val email = edit_email.text.toString().trim()
@@ -63,10 +86,13 @@ class LoginActivity : AppCompatActivity() {
                         // 1. Pegando os dados vindos do banco
                         val nomeRecebido = response.body()?.nome ?: "Usuário"
                         val idRecebido = response.body()?.userId ?: -1
-                        val roleRecebida =
-                            response.body()?.role ?: "customer" // Assume customer se vier nulo
+                        val roleRecebida = response.body()?.role ?: "customer" // Assume customer se vier nulo
 
-                        Log.d("DEBUG_SALVO", "Login OK! Nome: $nomeRecebido, ID: $idRecebido, ROLE: ${response.body()?.role}")
+                        Log.d("DEBUG_SALVO", "Login OK! Nome: $nomeRecebido, ID: $idRecebido, ROLE: $roleRecebida")
+
+                        // 🔥 2. SALVANDO A SESSÃO PARA NÃO PRECISAR LOGAR AMANHÃ
+                        val sessionManager = SessionManager(this@LoginActivity)
+                        sessionManager.salvarSessao(idRecebido, roleRecebida, nomeRecebido)
 
                         Toast.makeText(
                             this@LoginActivity,
@@ -74,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        // 2. Direcionamento exato com base no seu banco de dados
+                        // 3. Direcionamento exato com base no seu banco de dados
                         val intent = if (roleRecebida.equals("provider", ignoreCase = true)) {
                             // É prestador -> Vai para o Radar/Dashboard
                             Intent(this@LoginActivity, HomePrestadorActivity::class.java)
@@ -83,13 +109,12 @@ class LoginActivity : AppCompatActivity() {
                             Intent(this@LoginActivity, MainScreenActivity::class.java)
                         }
 
-                        // 3. Coloca os dados na mochila (ambas as telas precisam do ID e Nome)
+                        // 4. Coloca os dados na mochila (ambas as telas precisam do ID e Nome)
                         intent.putExtra("NOME_USUARIO", nomeRecebido)
                         intent.putExtra("USER_ID", idRecebido)
 
-                        // 4. Trava o botão de "voltar" do celular para não retornar à tela de login
-                        intent.flags =
-                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        // 5. Trava o botão de "voltar" do celular para não retornar à tela de login
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
                         startActivity(intent)
                         finish()

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="#222B38"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tv_tipo_servico_oficina"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Guincho Leve"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_status_oficina"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_status_oficina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View
+            android:id="@+id/divisor1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#374151"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_tipo_servico_oficina"/>
+
+        <TextView
+            android:id="@+id/tv_veiculo_cliente"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Cliente: Honda Civic - ABC1234"
+            android:textSize="14sp"
+            android:textColor="#B0BEC5"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/divisor1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_meu_guincho"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Guincho: Mercedes Accelo"
+            android:textSize="13sp"
+            android:textColor="#94A3B8"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_veiculo_cliente"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_distancia_oficina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15.2 km"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#F39C12"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_meu_guincho"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_preco_oficina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="R$ 150,00"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@id/tv_distancia_oficina"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

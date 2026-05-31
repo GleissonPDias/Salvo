@@ -17,6 +17,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Salvo"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".DetalhesPedidoOficinaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MeusPedidosOficinaActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -24,13 +30,10 @@
 
         <activity
             android:name=".StatusVeiculoActivity"
-            android:exported="false"
-            />
-
+            android:exported="false" />
         <activity
             android:name=".HomePrestadorActivity"
             android:exported="false" />
-
         <activity
             android:name=".SocorroActivity"
             android:exported="false" />
@@ -75,10 +78,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".PerfilClienteActivity" android:exported="false" />
-
-        <activity android:name=".MeusVeiculosActivity" android:exported="false" />
+        <activity
+            android:name=".PerfilClienteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MeusVeiculosActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

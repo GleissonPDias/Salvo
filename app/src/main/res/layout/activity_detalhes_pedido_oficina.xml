@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1F2B38"> <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:paddingHorizontal="16dp">
+
+    <ImageView
+        android:id="@+id/btn_voltar_detalhes"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerVertical="true"
+        android:src="@android:drawable/ic_menu_revert"
+        app:tint="#FFFFFF"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Detalhes do Serviço"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"/>
+</RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#222B38"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="STATUS ATUAL"
+                        android:textSize="12sp"
+                        android:textColor="#94A3B8"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tv_detalhe_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Status"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="4dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#374151"
+                        android:layout_marginVertical="16dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DATA DO PEDIDO"
+                        android:textSize="12sp"
+                        android:textColor="#94A3B8"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tv_detalhe_data"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="00/00/0000 00:00"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="4dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#222B38"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CLIENTE"
+                        android:textSize="12sp"
+                        android:textColor="#94A3B8"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tv_detalhe_cliente"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Nome do Cliente"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="4dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#374151"
+                        android:layout_marginVertical="16dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="VEÍCULO"
+                        android:textSize="12sp"
+                        android:textColor="#94A3B8"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tv_detalhe_veiculo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Marca/Modelo - Placa"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="4dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#222B38"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="LOCAL DE PARTIDA (ORIGEM)"
+                        android:textSize="12sp"
+                        android:textColor="#94A3B8"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tv_detalhe_origem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Coordenadas de Origem"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="4dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#374151"
+                        android:layout_marginVertical="16dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ENDEREÇO DE DESTINO"
+                        android:textSize="12sp"
+                        android:textColor="#94A3B8"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tv_detalhe_destino"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Endereço digitado pelo cliente"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="4dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#374151"
+                        android:layout_marginVertical="16dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DESCRIÇÃO / OBSERVAÇÕES"
+                        android:textSize="12sp"
+                        android:textColor="#94A3B8"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tv_detalhe_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Detalhes do problema informados..."
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="4dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

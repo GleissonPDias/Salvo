@@ -404,7 +404,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
-            android:text="Media"
+            android:text="Fotos do Local"
             android:textColor="#FFF"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -422,51 +422,68 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_lbl_media" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_video"
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp"
-            app:cardCornerRadius="12dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_lbl_media">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                tools:src="#444" />
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:src="@android:drawable/ic_media_play"
-                app:tint="#FFF" />
-        </com.google.android.material.card.MaterialCardView>
+        <!-- 🔥 O CARD DO VÍDEO FOI REMOVIDO DAQUI -->
 
+        <!-- 🔥 Layout das fotos agora ancorado abaixo do título 'tv_lbl_media' -->
         <LinearLayout
+            android:id="@+id/linearLayout_fotos"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="16dp"
             android:paddingHorizontal="16dp"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/card_video">
+            app:layout_constraintTop_toBottomOf="@id/tv_lbl_media"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
                 app:cardCornerRadius="8dp">
-                <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" tools:src="#666" />
+                <ImageView
+                    android:id="@+id/iv_foto_extra_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    tools:src="#666" />
             </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
                 app:cardCornerRadius="8dp">
-                <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" tools:src="#666" />
+                <ImageView
+                    android:id="@+id/iv_foto_extra_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    tools:src="#666" />
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_sair_conta"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="24dp"
+            android:text="Sair da Conta"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:backgroundTint="#EF4444"
+            app:cornerRadius="12dp"
+            app:icon="@android:drawable/ic_lock_power_off"
+            app:iconGravity="textStart"
+            app:iconTint="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@id/linearLayout_fotos"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -11,6 +11,9 @@ data class ServiceRequest(
     @SerializedName("prestador_nome")
     val prestadorNome: String? = "Oficina Parceira",
 
+    @SerializedName("cliente_nome")
+    val clienteNome: String?,
+
     @SerializedName("service_type")
     val serviceType: String,
 
@@ -44,7 +47,13 @@ data class ServiceRequest(
     val veiculoPrestadorNome: String?,
 
     @SerializedName("veiculo_prestador_placa")
-    val veiculoPrestadorPlaca: String?
+    val veiculoPrestadorPlaca: String?,
+
+    @SerializedName("latitude")
+    val latitude: Double? = null,
+
+    @SerializedName("longitude")
+    val longitude: Double? = null
 ) {
 
     // --- TRUQUES DE INTERFACE (UI HELPERS) ---
@@ -64,6 +73,9 @@ data class ServiceRequest(
     fun getStatusTraduzido(): String {
         return when (status.lowercase()) {
             "searching" -> "Buscando Oficina..."
+            "en_route" -> "A caminho"
+            "accepted" -> "Confirmado"
+            "arrived" -> "No Local"
             "in_progress" -> "Em Andamento"
             "completed" -> "Concluído"
             "canceled" -> "Cancelado"
@@ -90,7 +102,8 @@ data class AceitarPedidoRequestApp(
     val requestId: Int,
     val providerId: Int,
     val price: Double,
-    val distance: Double
+    val distance: Double,
+    val vehicleId: Int
 )
 
 data class AceitarPedidoResponse(

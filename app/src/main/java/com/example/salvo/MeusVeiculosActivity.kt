@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.salvo.adapter.VehicleAdapter
 import com.example.salvo.model.AuthResponse
 import com.example.salvo.model.Vehicle
+import com.example.salvo.model.VeiculoRequest
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
@@ -146,7 +147,8 @@ class MeusVeiculosActivity : AppCompatActivity() {
                 if (veiculoExistente == null) {
                     salvarNovoVeiculoNaApi(modelo, placa, dialog)
                 } else {
-                    atualizarVeiculoNaApi(veiculoExistente.id, modelo, placa, dialog)
+                    // Passamos também a foto antiga para não perdê-la caso ele não escolha uma nova
+                    atualizarVeiculoNaApi(veiculoExistente.id, modelo, placa, veiculoExistente.vehiclePhoto, dialog)
                 }
             } else {
                 Toast.makeText(this, "Preencha o nome e a placa.", Toast.LENGTH_SHORT).show()
@@ -155,12 +157,14 @@ class MeusVeiculosActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    // 🔥 SUBSTITUA A FUNÇÃO ANTIGA POR ESTA
     private fun salvarNovoVeiculoNaApi(modelo: String, placa: String, dialog: BottomSheetDialog) {
-        val dados = mapOf(
-            "customer_id" to customerId.toString(), // Aqui enviamos o ID do Cliente em vez de Provider
-            "name" to modelo,
-            "plate" to placa,
-            "vehicle_photo" to base64Veiculo
+        // Usando a Data Class em vez de mapOf
+        val dados = VeiculoRequest(
+            providerId = customerId, // O backend recebe na mesma variável
+            name = modelo,
+            plate = placa,
+            vehiclePhoto = base64Veiculo
         )
 
         RetrofitClient.apiService.adicionarVeiculo(dados).enqueue(object : Callback<AuthResponse> {
@@ -175,18 +179,16 @@ class MeusVeiculosActivity : AppCompatActivity() {
         })
     }
 
-    private fun atualizarVeiculoNaApi(veiculoId: Int, modelo: String, placa: String, dialog: BottomSheetDialog) {
-        val dados = mutableMapOf(
-            "customer_id" to customerId.toString(),
-            "name" to modelo,
-            "plate" to placa
+    // 🔥 SUBSTITUA A FUNÇÃO ANTIGA POR ESTA
+    private fun atualizarVeiculoNaApi(veiculoId: Int, modelo: String, placa: String, fotoAntiga: String?, dialog: BottomSheetDialog) {
+        // Usando a Data Class em vez de mutableMapOf
+        val dados = VeiculoRequest(
+            id = veiculoId,
+            providerId = customerId,
+            name = modelo,
+            plate = placa,
+            vehiclePhoto = base64Veiculo ?: fotoAntiga // Se não escolheu foto nova, mantém a antiga
         )
-
-        // 👇 AQUI ESTÁ A CORREÇÃO: Criamos uma cópia local e imutável para o Kotlin confiar
-        val fotoAtual = base64Veiculo
-        if (fotoAtual != null) {
-            dados["vehicle_photo"] = fotoAtual
-        }
 
         RetrofitClient.apiService.atualizarVeiculoCompleto(veiculoId, dados).enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {

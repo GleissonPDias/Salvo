@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.salvo.model.AuthResponse
 import com.example.salvo.model.Vehicle
+import com.example.salvo.model.VeiculoRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
@@ -89,7 +90,8 @@ class StatusVeiculoActivity : AppCompatActivity() {
         tvMarca.text = veiculo.brand ?: "Não Informada"
         tvPlaca.text = veiculo.plate.uppercase()
 
-        tvGeralVeiculo.text = veiculo.vehicle_type ?: "Não Definido"
+        // 🚨 CORREÇÃO: Usando a propriedade em camelCase conforme nossa Model (vehicleType)
+        tvGeralVeiculo.text = veiculo.vehicleType ?: "Não Definido"
         tvGeralPlaca.text = veiculo.plate.uppercase()
 
         tvStatusOperacional.text = veiculo.status
@@ -99,8 +101,9 @@ class StatusVeiculoActivity : AppCompatActivity() {
             else -> tvStatusOperacional.setTextColor(Color.parseColor("#EF4444"))
         }
 
-        tvDataManutencao.text = veiculo.maintenance_date ?: "---"
-        tvStatusManutencao.text = if (veiculo.maintenance_date.isNullOrEmpty()) "Sem data" else "Agendada"
+        // 🚨 CORREÇÃO: Usando a propriedade em camelCase conforme nossa Model (maintenanceDate)
+        tvDataManutencao.text = veiculo.maintenanceDate ?: "---"
+        tvStatusManutencao.text = if (veiculo.maintenanceDate.isNullOrEmpty()) "Sem data" else "Agendada"
         tvStatusManutencao.setTextColor(Color.parseColor("#F59E0B"))
     }
 
@@ -127,7 +130,8 @@ class StatusVeiculoActivity : AppCompatActivity() {
             veiculoCarregado?.let { veiculo ->
                 val input = TextInputEditText(this).apply {
                     hint = "DD/MM/AAAA"
-                    setText(veiculo.maintenance_date ?: "")
+                    // 🚨 CORREÇÃO: Usando a propriedade em camelCase conforme nossa Model
+                    setText(veiculo.maintenanceDate ?: "")
                 }
                 AlertDialog.Builder(this, R.style.Theme_Salvo)
                     .setTitle("Atualizar Data de Manutenção")
@@ -135,14 +139,17 @@ class StatusVeiculoActivity : AppCompatActivity() {
                     .setPositiveButton("Salvar") { _, _ ->
                         val novaData = input.text.toString().trim()
 
-                        // AQUI ESTÁ A CORREÇÃO DE PRECEDÊNCIA (Uso dos parênteses)
-                        val dados = mapOf(
-                            "provider_id" to userIdLogado.toString(),
-                            "name" to veiculo.name,
-                            "plate" to veiculo.plate,
-                            "brand" to (veiculo.brand ?: ""),
-                            "vehicle_type" to (veiculo.vehicle_type ?: ""),
-                            "maintenance_date" to novaData
+                        // 🚨 CORREÇÃO: Substituímos o mapOf() pela nossa VeiculoRequest
+                        val dados = VeiculoRequest(
+                            id = veiculo.id,
+                            providerId = userIdLogado,
+                            name = veiculo.name,
+                            plate = veiculo.plate,
+                            brand = veiculo.brand,
+                            vehicleType = veiculo.vehicleType,
+                            maintenanceDate = novaData,       // Envia a data atualizada
+                            status = veiculo.status,
+                            vehiclePhoto = veiculo.vehiclePhoto // Repassa a foto antiga pra não apagar no servidor
                         )
 
                         RetrofitClient.apiService.atualizarVeiculoCompleto(veiculo.id, dados).enqueue(object : Callback<AuthResponse> {

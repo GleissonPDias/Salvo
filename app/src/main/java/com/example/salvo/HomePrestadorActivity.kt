@@ -32,6 +32,7 @@ import com.example.salvo.adapter.RecentActivityAdapter
 import com.example.salvo.model.AceitarPedidoRequestApp
 import com.example.salvo.model.AceitarPedidoResponse
 import com.example.salvo.model.ServiceRequest
+import com.example.salvo.model.Vehicle // 🔥 Importado para a frota
 import com.example.salvo.network.WebSocketManager
 
 class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -50,14 +51,19 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var adapterAtividades: RecentActivityAdapter
 
+    // 🔥 VARIÁVEL PARA GUARDAR A FROTA
+    private var frotaAtiva: List<Vehicle> = emptyList()
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        ) {
             pegarLocalizacaoAtual()
         } else {
-            Toast.makeText(this, "Permissão negada. O Radar precisa do GPS.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Permissão negada. O Radar precisa do GPS.", Toast.LENGTH_LONG)
+                .show()
             atualizarMapa(LatLng(-23.55052, -46.633308))
         }
     }
@@ -85,7 +91,6 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupRecyclerView() {
-        // Inicializa o adapter passando o que deve acontecer ao clicar num item
         adapterAtividades = RecentActivityAdapter(emptyList()) { pedidoClicado ->
             abrirDialogoDetalhesPedido(pedidoClicado)
         }
@@ -95,31 +100,96 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
 
         if (currentUserId != -1) {
             carregarHistoricoDaOficina()
+            carregarFrotaParaOAlerta() // 🔥 BUSCA A FROTA QUANDO A TELA ABRE
         }
     }
 
-    private fun carregarHistoricoDaOficina() {
-        // Altere a rota "listarPedidos" para a rota exata que você criou na sua Interface Retrofit
-        // para buscar o histórico da oficina (algo como `obterHistoricoOficina`).
-        RetrofitClient.apiService.obterHistoricoOficina(currentUserId).enqueue(object : retrofit2.Callback<List<ServiceRequest>> {
-            override fun onResponse(call: retrofit2.Call<List<ServiceRequest>>, response: retrofit2.Response<List<ServiceRequest>>) {
+    // --- MÉTODOS NOVOS DA FROTA ---
+    private fun carregarFrotaParaOAlerta() {
+        RetrofitClient.apiService.obterVeiculos(currentUserId).enqueue(object : retrofit2.Callback<List<Vehicle>> {
+            override fun onResponse(call: retrofit2.Call<List<Vehicle>>, response: retrofit2.Response<List<Vehicle>>) {
                 if (response.isSuccessful) {
-                    val listaHistorico = response.body()
-
-                    if (listaHistorico != null && listaHistorico.isNotEmpty()) {
-                        // Mágica! A lista foi encontrada e o adapter se atualiza sozinho
-                        adapterAtividades.atualizarLista(listaHistorico)
-                    } else {
-                        // Lista veio vazia (a oficina nunca atendeu ninguém)
-                        adapterAtividades.atualizarLista(emptyList())
-                    }
+                    frotaAtiva = response.body() ?: emptyList()
+                    configurarSpinnerVeiculos()
                 }
             }
-
-            override fun onFailure(call: retrofit2.Call<List<ServiceRequest>>, t: Throwable) {
-                android.util.Log.e("HOME_PRESTADOR", "Erro ao carregar histórico: ${t.message}")
+            override fun onFailure(call: retrofit2.Call<List<Vehicle>>, t: Throwable) {
+                Log.e("HOME_PRESTADOR", "Erro ao carregar frota: ${t.message}")
             }
         })
+    }
+
+    private fun configurarSpinnerVeiculos() {
+        // Formata para a lista ficar bonita. Ex: "Mercedes Accelo - ABC1234"
+        val nomesVeiculos = frotaAtiva.map { "${it.name} - ${it.plate}" }
+
+        val adapterSpinner = android.widget.ArrayAdapter(this, android.R.layout.simple_spinner_item, nomesVeiculos)
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        binding.containerAlerta.spinnerVeiculoResgate.adapter = adapterSpinner
+    }
+    // ---------------------------------
+
+    private fun carregarHistoricoDaOficina() {
+        RetrofitClient.apiService.obterHistoricoOficina(currentUserId)
+            .enqueue(object : retrofit2.Callback<List<ServiceRequest>> {
+                override fun onResponse(
+                    call: retrofit2.Call<List<ServiceRequest>>,
+                    response: retrofit2.Response<List<ServiceRequest>>
+                ) {
+                    if (response.isSuccessful) {
+                        val listaHistorico = response.body()
+
+                        if (listaHistorico != null && listaHistorico.isNotEmpty()) {
+
+
+                            val ultimos10pedidos = listaHistorico.take(5)
+
+                            adapterAtividades.atualizarLista(ultimos10pedidos)
+
+                            val primeiroPedido = listaHistorico[0]
+                            binding.tvOficinaNome.text = primeiroPedido.prestadorNome ?: "Sua Oficina"
+
+                            if (!primeiroPedido.prestadorFoto.isNullOrEmpty()) {
+                                try {
+                                    var base64Limpo = primeiroPedido.prestadorFoto
+                                    if (base64Limpo.contains(",")) base64Limpo = base64Limpo.substringAfter(",")
+                                    base64Limpo = base64Limpo.replace(" ", "+")
+
+                                    val decodedString = android.util.Base64.decode(base64Limpo, android.util.Base64.DEFAULT)
+                                    val decodedByte = android.graphics.BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+                                    binding.ivOficinaPerfil.setImageBitmap(decodedByte)
+                                } catch (e: Exception) {
+                                    binding.ivOficinaPerfil.setImageResource(R.drawable.logo)
+                                }
+                            }
+
+                            var totalGanhos = 0.0
+                            var totalResgates = 0
+
+                            for (pedido in listaHistorico) {
+                                if (pedido.status == "completed" || pedido.status == "accepted") {
+                                    totalResgates++
+                                    totalGanhos += pedido.finalPrice ?: 0.0
+                                }
+                            }
+
+                            binding.tvGanhosValor.text = "R$ ${String.format("%.2f", totalGanhos).replace(".", ",")}"
+                            binding.tvResgatesValor.text = totalResgates.toString()
+
+                        } else {
+                            adapterAtividades.atualizarLista(emptyList())
+                            binding.tvOficinaNome.text = "Sua Oficina"
+                            binding.tvGanhosValor.text = "R$ 0,00"
+                            binding.tvResgatesValor.text = "0"
+                        }
+                    }
+                }
+
+                override fun onFailure(call: retrofit2.Call<List<ServiceRequest>>, t: Throwable) {
+                    android.util.Log.e("HOME_PRESTADOR", "Erro ao carregar histórico: ${t.message}")
+                }
+            })
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -133,10 +203,9 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             pegarLocalizacaoAtual()
         } else {
-            requestPermissionLauncher.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ))
+            requestPermissionLauncher.launch(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            )
         }
     }
 
@@ -180,6 +249,11 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
                 viewModel.toggleStatus(isChecked)
             }
         }
+        binding.btnHistoricoPedidos.setOnClickListener {
+            val intent = Intent(this, MeusPedidosOficinaActivity::class.java)
+            intent.putExtra("USER_ID", currentUserId)
+            startActivity(intent)
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -202,6 +276,7 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
                     dX = view.x - event.rawX
                     true
                 }
+
                 MotionEvent.ACTION_MOVE -> {
                     var novaPosicaoX = event.rawX + dX
                     if (novaPosicaoX < 5f) novaPosicaoX = 5f
@@ -209,43 +284,79 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
                     view.x = novaPosicaoX
                     true
                 }
+
                 MotionEvent.ACTION_UP -> {
                     if (view.x >= (limiteMaximo * 0.75f)) {
 
-                        // 1. O botão chegou até o final! Prepara o pacote para a API
+                        // 🔥 LÓGICA DO SPINNER AQUI:
+                        val posicaoSelecionada = binding.containerAlerta.spinnerVeiculoResgate.selectedItemPosition
+
+                        // Prevenção de segurança: Não deixar aceitar se a oficina não tem carro
+                        if (posicaoSelecionada < 0 || frotaAtiva.isEmpty()) {
+                            Toast.makeText(this@HomePrestadorActivity, "Cadastre ou selecione um veículo primeiro!", Toast.LENGTH_LONG).show()
+                            view.animate().x(5f).setDuration(200).start()
+                            return@setOnTouchListener true
+                        }
+
+                        val veiculoEscolhido = frotaAtiva[posicaoSelecionada]
+
+                        // 1. O botão chegou até o final! Prepara o pacote para a API com o vehicleId
                         val requestSegura = AceitarPedidoRequestApp(
                             requestId = pedidoAtualId,
                             providerId = currentUserId,
                             price = pedidoAtualPreco,
-                            distance = pedidoAtualDistancia
+                            distance = pedidoAtualDistancia,
+                            vehicleId = veiculoEscolhido.id // 🔥 ENVIANDO PRO SERVIDOR
                         )
 
-                        // 2. Chama o seu backend usando o Retrofit (Ajuste o RetrofitClient para a sua classe real)
-                        RetrofitClient.apiService.aceitarSocorro(requestSegura).enqueue(object : retrofit2.Callback<AceitarPedidoResponse> {
-                            override fun onResponse(call: retrofit2.Call<AceitarPedidoResponse>, response: retrofit2.Response<AceitarPedidoResponse>) {
-                                if (response.isSuccessful && response.body()?.sucesso == true) {
-                                    Toast.makeText(this@HomePrestadorActivity, "Serviço Confirmado!", Toast.LENGTH_LONG).show()
-                                    binding.containerAlerta.root.visibility = View.GONE
-                                    view.x = 5f
-                                } else {
-                                    Toast.makeText(this@HomePrestadorActivity, "Outra oficina aceitou primeiro!", Toast.LENGTH_LONG).show()
-                                    binding.containerAlerta.root.visibility = View.GONE
-                                    view.x = 5f
+                        // 2. Chama o seu backend
+                        RetrofitClient.apiService.aceitarSocorro(requestSegura)
+                            .enqueue(object : retrofit2.Callback<AceitarPedidoResponse> {
+                                override fun onResponse(
+                                    call: retrofit2.Call<AceitarPedidoResponse>,
+                                    response: retrofit2.Response<AceitarPedidoResponse>
+                                ) {
+                                    if (response.isSuccessful && response.body()?.sucesso == true) {
+                                        Toast.makeText(
+                                            this@HomePrestadorActivity,
+                                            "Serviço Confirmado com o veículo ${veiculoEscolhido.plate}!",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        binding.containerAlerta.root.visibility = View.GONE
+                                        view.x = 5f
+                                        carregarHistoricoDaOficina() // Atualiza a home
+                                    } else {
+                                        Toast.makeText(
+                                            this@HomePrestadorActivity,
+                                            "Outra oficina aceitou primeiro!",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        binding.containerAlerta.root.visibility = View.GONE
+                                        view.x = 5f
+                                    }
                                 }
-                            }
 
-                            override fun onFailure(call: retrofit2.Call<AceitarPedidoResponse>, t: Throwable) {
-                                Toast.makeText(this@HomePrestadorActivity, "Erro de conexão.", Toast.LENGTH_SHORT).show()
-                                view.animate().x(5f).setDuration(200).start()
-                            }
-                        })
+                                override fun onFailure(
+                                    call: retrofit2.Call<AceitarPedidoResponse>,
+                                    t: Throwable
+                                ) {
+                                    Toast.makeText(
+                                        this@HomePrestadorActivity,
+                                        "Erro de conexão.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    view.animate().x(5f).setDuration(200).start()
+                                }
+                            })
 
                     } else {
                         // O mecânico soltou o dedo no meio do caminho, devolve o botão pro início
                         view.animate().x(5f).setDuration(200).start()
                     }
                     true
-                } else -> false
+                }
+
+                else -> false
             }
         }
     }
@@ -262,22 +373,25 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.tvRadarStatus.setTextColor(Color.parseColor("#4CAF50"))
 
                     if (socketManager == null && currentUserId != -1) {
-                        Log.d("SALVO_WEBSOCKET", "Iniciando WebSocketManager para o ID: $currentUserId")
                         socketManager = WebSocketManager(currentUserId) { jsonChamado ->
-                            Log.w("SALVO_WEBSOCKET", "Abrindo CARD LARANJA na tela!")
 
                             pedidoAtualId = jsonChamado.getInt("requestId")
                             pedidoAtualPreco = jsonChamado.getDouble("rawPreco")
                             pedidoAtualDistancia = jsonChamado.getDouble("rawDistancia")
 
-                            // DISPARO CRÍTICO: Torna o include visível e popula dados
                             binding.containerAlerta.root.visibility = View.VISIBLE
-                            binding.containerAlerta.tvAlertaVeiculo.text = jsonChamado.getString("veiculo")
-                            binding.containerAlerta.tvAlertaDefeito.text = jsonChamado.getString("defeito")
-                            binding.containerAlerta.tvAlertaPreco.text = jsonChamado.getString("preco")
-                            binding.containerAlerta.tvAlertaClienteNome.text = jsonChamado.getString("clienteNome")
-                            binding.containerAlerta.tvAlertaClienteNota.text = jsonChamado.getString("clienteNota")
-                            binding.containerAlerta.tvAlertaDistancia.text = jsonChamado.getString("distanciaText")
+                            binding.containerAlerta.tvAlertaVeiculo.text =
+                                jsonChamado.getString("veiculo")
+                            binding.containerAlerta.tvAlertaDefeito.text =
+                                jsonChamado.getString("defeito")
+                            binding.containerAlerta.tvAlertaPreco.text =
+                                jsonChamado.getString("preco")
+                            binding.containerAlerta.tvAlertaClienteNome.text =
+                                jsonChamado.getString("clienteNome")
+                            binding.containerAlerta.tvAlertaClienteNota.text =
+                                jsonChamado.getString("clienteNota")
+                            binding.containerAlerta.tvAlertaDistancia.text =
+                                jsonChamado.getString("distanciaText")
 
                         }
                         socketManager?.conectar()
@@ -307,21 +421,40 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
             when (item.itemId) {
                 R.id.nav_radar -> true
                 R.id.nav_servicos -> {
-                    startActivity(Intent(this, CardapioServicosActivity::class.java).putExtra("USER_ID", currentUserId))
+                    startActivity(
+                        Intent(
+                            this,
+                            CardapioServicosActivity::class.java
+                        ).putExtra("USER_ID", currentUserId)
+                    )
                     false
                 }
+
                 R.id.nav_frota -> {
-                    startActivity(Intent(this, GestaoFrotaActivity::class.java).putExtra("USER_ID", currentUserId))
+                    startActivity(
+                        Intent(this, GestaoFrotaActivity::class.java).putExtra(
+                            "USER_ID",
+                            currentUserId
+                        )
+                    )
                     false
                 }
+
                 R.id.nav_chat -> {
                     Toast.makeText(this, "Chat em desenvolvimento!", Toast.LENGTH_SHORT).show()
                     false
                 }
+
                 R.id.nav_perfil -> {
-                    startActivity(Intent(this, PerfilOficinaActivity::class.java).putExtra("USER_ID", currentUserId))
+                    startActivity(
+                        Intent(
+                            this,
+                            PerfilOficinaActivity::class.java
+                        ).putExtra("USER_ID", currentUserId)
+                    )
                     false
                 }
+
                 else -> false
             }
         }
@@ -334,7 +467,8 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
 
     // --- GESTÃO DE STATUS DO PEDIDO ---
     private fun abrirDialogoDetalhesPedido(pedido: ServiceRequest) {
-        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(this, R.style.Theme_Salvo)
+        val dialog =
+            com.google.android.material.bottomsheet.BottomSheetDialog(this, R.style.Theme_Salvo)
         val view = layoutInflater.inflate(R.layout.layout_dialog_detalhes_pedido, null)
         dialog.setContentView(view)
 
@@ -342,7 +476,8 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
         val tvServico = view.findViewById<android.widget.TextView>(R.id.tv_detalhes_servico)
         val tvPreco = view.findViewById<android.widget.TextView>(R.id.tv_detalhes_preco)
         val tvDistancia = view.findViewById<android.widget.TextView>(R.id.tv_detalhes_distancia)
-        val btnAlterarStatus = view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_alterar_status_pedido)
+        val btnAlterarStatus =
+            view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_alterar_status_pedido)
 
         tvTitulo.text = "Chamado #${pedido.id}"
         tvServico.text = "Serviço: ${pedido.serviceType}"
@@ -351,48 +486,79 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
         tvPreco.text = "Valor Total: R$ ${String.format("%.2f", preco).replace(".", ",")}"
 
         val distancia = pedido.finalDistance ?: 0.0
-        tvDistancia.text = "Distância Percorrida: ${String.format("%.1f", distancia).replace(".", ",")} km"
+        tvDistancia.text =
+            "Distância Percorrida: ${String.format("%.1f", distancia).replace(".", ",")} km"
 
         btnAlterarStatus.setOnClickListener {
-            dialog.dismiss() // Fecha os detalhes
-            abrirMenuAlterarStatus(pedido) // Abre o menu de Status
+            dialog.dismiss()
+            abrirMenuAlterarStatus(pedido)
         }
 
         dialog.show()
     }
 
     private fun abrirMenuAlterarStatus(pedido: ServiceRequest) {
-        // Opções de status que o motorista de guincho pode reportar
-        val opcoesStatus = arrayOf("A Caminho", "No Local", "Em Andamento", "Finalizado", "Cancelado")
+        val opcoesStatusPt =
+            arrayOf("A caminho", "No Local", "Em Andamento", "Concluído", "Cancelado")
+
+        val tradutorPtParaEn = mapOf(
+            "A caminho" to "en_route",
+            "No Local" to "arrived",
+            "Em Andamento" to "in_progress",
+            "Concluído" to "completed",
+            "Cancelado" to "canceled"
+        )
 
         androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_Salvo)
             .setTitle("Atualizar Status da Viagem")
-            .setItems(opcoesStatus) { _, which ->
-                val novoStatus = opcoesStatus[which]
-                enviarNovoStatusParaAPI(pedido.id, novoStatus)
+            .setItems(opcoesStatusPt) { _, which ->
+                val statusPt = opcoesStatusPt[which]
+                val statusEn = tradutorPtParaEn[statusPt] ?: statusPt
+                enviarNovoStatusParaAPI(pedido.id, statusPt, statusEn)
             }
             .setNegativeButton("Fechar", null)
             .show()
     }
 
-    private fun enviarNovoStatusParaAPI(pedidoId: Int, novoStatus: String) {
+    private fun enviarNovoStatusParaAPI(pedidoId: Int, statusPt: String, statusEn: String) {
         val dados = mapOf(
-            "status" to novoStatus,
+            "status" to statusEn,
             "provider_id" to currentUserId.toString()
         )
 
-        RetrofitClient.apiService.atualizarStatusPedido(pedidoId, dados).enqueue(object : retrofit2.Callback<com.example.salvo.model.AuthResponse> {
-            override fun onResponse(call: retrofit2.Call<com.example.salvo.model.AuthResponse>, response: retrofit2.Response<com.example.salvo.model.AuthResponse>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@HomePrestadorActivity, "Status atualizado para: $novoStatus", Toast.LENGTH_SHORT).show()
-                    carregarHistoricoDaOficina() // Recarrega a lista para mostrar atualizado
-                } else {
-                    Toast.makeText(this@HomePrestadorActivity, "Erro ao atualizar status.", Toast.LENGTH_SHORT).show()
+        RetrofitClient.apiService.atualizarStatusPedido(pedidoId, dados)
+            .enqueue(object : retrofit2.Callback<com.example.salvo.model.AuthResponse> {
+                override fun onResponse(
+                    call: retrofit2.Call<com.example.salvo.model.AuthResponse>,
+                    response: retrofit2.Response<com.example.salvo.model.AuthResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(
+                            this@HomePrestadorActivity,
+                            "Status atualizado para: $statusPt",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        carregarHistoricoDaOficina()
+                    } else {
+                        Toast.makeText(
+                            this@HomePrestadorActivity,
+                            "Erro ao atualizar status.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-            }
-            override fun onFailure(call: retrofit2.Call<com.example.salvo.model.AuthResponse>, t: Throwable) {
-                Toast.makeText(this@HomePrestadorActivity, "Falha de conexão com a API.", Toast.LENGTH_SHORT).show()
-            }
-        })
+
+                override fun onFailure(
+                    call: retrofit2.Call<com.example.salvo.model.AuthResponse>,
+                    t: Throwable
+                ) {
+                    Toast.makeText(
+                        this@HomePrestadorActivity,
+                        "Falha de conexão com a API.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
     }
+
 }

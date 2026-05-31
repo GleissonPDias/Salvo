@@ -195,7 +195,9 @@ class MeusPedidosActivity : AppCompatActivity() {
             0 -> todosPedidos.filter {
                 it.status == "searching" ||
                         it.status == "in_progress" ||
-                        it.status == "accepted"
+                        it.status == "accepted" ||
+                        it.status == "en_route" ||
+                        it.status == "arrived"
             }
 
             // Aba 1: Concluídos ou Cancelados

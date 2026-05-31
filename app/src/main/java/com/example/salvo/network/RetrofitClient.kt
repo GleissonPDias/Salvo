@@ -12,6 +12,7 @@ import com.example.salvo.model.RegisterRequest
 import com.example.salvo.model.ServiceItem
 import com.example.salvo.model.ServiceRequest
 import com.example.salvo.model.Vehicle
+import com.example.salvo.model.VeiculoRequest
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -62,28 +63,22 @@ interface ApiService {
     @GET("veiculos-oficina/{providerId}")
     fun obterVeiculos(@Path("providerId") providerId: Int): Call<List<Vehicle>>
 
+    // 🔥 ATUALIZADO AQUI
     @POST("adicionar-veiculo")
-    fun adicionarVeiculo(@Body dados: Map<String, String?>): Call<AuthResponse>
+    fun adicionarVeiculo(@Body dados: VeiculoRequest): Call<AuthResponse>
 
     @DELETE("excluir-veiculo/{id}/{providerId}")
     fun excluirVeiculo(@Path("id") id: Int, @Path("providerId") providerId: Int): Call<AuthResponse>
 
     @PATCH("atualizar-status-pedido/{id}")
-    fun atualizarStatusPedido(
-        @Path("id") id: Int,
-        @Body dados: Map<String, String>
-    ): Call<AuthResponse>
-    @PATCH("atualizar-status-veiculo/{id}")
-    fun atualizarStatusVeiculo(
-        @Path("id") id: Int,
-        @Body dados: Map<String, String>
-    ): Call<AuthResponse>
+    fun atualizarStatusPedido(@Path("id") id: Int, @Body dados: Map<String, String>): Call<AuthResponse>
 
+    @PATCH("atualizar-status-veiculo/{id}")
+    fun atualizarStatusVeiculo(@Path("id") id: Int, @Body dados: Map<String, String>): Call<AuthResponse>
+
+    // 🔥 ATUALIZADO AQUI
     @PUT("atualizar-veiculo/{id}")
-    fun atualizarVeiculoCompleto(
-        @Path("id") id: Int,
-        @Body dados: Map<String, String?>
-    ): Call<AuthResponse>
+    fun atualizarVeiculoCompleto(@Path("id") id: Int, @Body dados: VeiculoRequest): Call<AuthResponse>
 
     // --- ROTAS DO CARDÁPIO DE SERVIÇOS ---
 
