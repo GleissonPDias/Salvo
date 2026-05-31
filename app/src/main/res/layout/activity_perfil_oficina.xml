@@ -132,6 +132,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:visibility="gone">
                 <EditText
                     android:id="@+id/et_edit_nome"
@@ -143,11 +144,14 @@
                     android:textColorHint="#555" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_save_nome"
-                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:text="OK"
-                    android:textColor="#F59E0B" />
+                    android:textColor="#161922"
+                    android:textStyle="bold"
+                    app:backgroundTint="#F59E0B"
+                    app:cornerRadius="8dp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -196,6 +200,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:visibility="gone">
                 <EditText
                     android:id="@+id/et_edit_cnpj"
@@ -203,14 +208,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Novo CNPJ..."
-                    android:textColor="#FFFFFF" />
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#555" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_save_cnpj"
-                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:text="OK"
-                    android:textColor="#F59E0B" />
+                    android:textColor="#161922"
+                    android:textStyle="bold"
+                    app:backgroundTint="#F59E0B"
+                    app:cornerRadius="8dp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -259,6 +268,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:visibility="gone">
                 <EditText
                     android:id="@+id/et_edit_localizacao"
@@ -268,14 +278,18 @@
                     android:clickable="true"
                     android:focusable="false"
                     android:hint="Toque para buscar no mapa..."
-                    android:textColor="#FFFFFF" />
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#555" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_save_localizacao"
-                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:text="OK"
-                    android:textColor="#F59E0B" />
+                    android:textColor="#161922"
+                    android:textStyle="bold"
+                    app:backgroundTint="#F59E0B"
+                    app:cornerRadius="8dp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -358,17 +372,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_botoes_vis" />
 
-        <TextView
-            android:id="@+id/btn_edit_especialidades"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="Edit"
-            android:textColor="#F59E0B"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/tv_lbl_especialidades"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_lbl_especialidades" />
 
         <HorizontalScrollView
             android:id="@+id/scroll_tags"
@@ -398,6 +401,7 @@
 
             </LinearLayout>
         </HorizontalScrollView>
+
         <TextView
             android:id="@+id/tv_lbl_media"
             android:layout_width="wrap_content"
@@ -422,9 +426,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_lbl_media" />
 
-        <!-- 🔥 O CARD DO VÍDEO FOI REMOVIDO DAQUI -->
-
-        <!-- 🔥 Layout das fotos agora ancorado abaixo do título 'tv_lbl_media' -->
         <LinearLayout
             android:id="@+id/linearLayout_fotos"
             android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.example.salvo
 
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -20,6 +21,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.salvo.model.AuthResponse
 import com.example.salvo.model.ServiceItem
+import com.example.salvo.utils.SessionManager
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -34,11 +36,14 @@ import retrofit2.Response
 class PerfilOficinaActivity : AppCompatActivity() {
 
     private var oficinaId = -1
-    // Reinserida a sua chave original
     private val GOOGLE_MAPS_API_KEY = "AIzaSyDXqV98pRQpyjpc0jXT47VAhks7iLncCZg"
+
+    // Variável para saber qual foto (1 ou 2) a oficina escolheu fazer upload
+    private var slotFotoAtual = 1
 
     // --- LANÇADORES (ACTIVITY RESULTS) ---
 
+    // 1. Lançador da foto do Banner (Logo principal)
     private val selecionarFoto = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             val base64String = uriToBase64(uri)
@@ -46,6 +51,23 @@ class PerfilOficinaActivity : AppCompatActivity() {
                 findViewById<ImageView>(R.id.iv_banner_imagem).setImageURI(uri)
                 atualizarNoServidor("user_banner", base64String)
                 Toast.makeText(this, "Salvando imagem...", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // 2. 🔥 NOVO: Lançador das Fotos Extras (Fotos do Local)
+    private val selecionarFotoExtra = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+            val base64String = uriToBase64(uri)
+            if (base64String != null) {
+                if (slotFotoAtual == 1) {
+                    findViewById<ImageView>(R.id.iv_foto_extra_1).setImageURI(uri)
+                    atualizarNoServidor("foto_1", base64String) // Envia para o banco como foto_1
+                } else {
+                    findViewById<ImageView>(R.id.iv_foto_extra_2).setImageURI(uri)
+                    atualizarNoServidor("foto_2", base64String) // Envia para o banco como foto_2
+                }
+                Toast.makeText(this, "Salvando foto do local...", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -64,7 +86,7 @@ class PerfilOficinaActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_perfil_oficina)
 
-        // 1. Recupera o ID da oficina
+        // Recupera o ID da oficina
         oficinaId = intent.getIntExtra("USER_ID", -1)
         if (oficinaId == -1) {
             Toast.makeText(this, "Erro: Usuário não identificado", Toast.LENGTH_SHORT).show()
@@ -72,19 +94,18 @@ class PerfilOficinaActivity : AppCompatActivity() {
             return
         }
 
-        // 2. Inicializa o Places SDK com a sua chave
         if (!Places.isInitialized()) {
             Places.initialize(applicationContext, GOOGLE_MAPS_API_KEY)
         }
 
-        // 3. Configurações de Botões e Cliques (Tudo dentro do onCreate agora para evitar crash)
+        // Configurações e Cliques
         configurarBotoesNavegacao()
+        configurarBotoesDeFotosExtras() // 🔥 Função nova chamada aqui!
 
         findViewById<View>(R.id.btn_editar_banner).setOnClickListener {
             selecionarFoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        // 4. Configura os campos para edição
         configurarCampoEditavel(R.id.btn_edit_nome, R.id.tv_val_nome_fantasia, R.id.layout_edit_nome, R.id.et_edit_nome, R.id.btn_save_nome, "user_name")
         configurarCampoEditavel(R.id.btn_edit_cnpj, R.id.tv_val_cnpj, R.id.layout_edit_cnpj, R.id.et_edit_cnpj, R.id.btn_save_cnpj, "user_cpf_cnpj")
         configurarLocalizacaoInteligente()
@@ -94,34 +115,80 @@ class PerfilOficinaActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Recarrega os dados toda vez que o usuário volta para esta tela
         if (oficinaId != -1) {
             carregarDadosDoPerfil()
             carregarServicosDaOficina()
         }
     }
 
+    // --- 🔥 NOVA SEÇÃO DE MÍDIA (FOTOS DO LOCAL) ---
+    private fun configurarBotoesDeFotosExtras() {
+        val btnUploadMedia = findViewById<TextView>(R.id.btn_upload_media)
+        val ivFoto1 = findViewById<ImageView>(R.id.iv_foto_extra_1)
+        val ivFoto2 = findViewById<ImageView>(R.id.iv_foto_extra_2)
+
+        // Ação do Botão UPLOAD
+        btnUploadMedia.setOnClickListener {
+            val opcoes = arrayOf("Atualizar Foto 1 (Esquerda)", "Atualizar Foto 2 (Direita)")
+
+            // Cria uma caixinha flutuante para a oficina escolher
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Escolha qual quadro atualizar:")
+                .setItems(opcoes) { _, which ->
+                    slotFotoAtual = which + 1 // "which" é 0 ou 1. Somamos 1 para virar 1 ou 2.
+                    selecionarFotoExtra.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                }
+                .show()
+        }
+
+        // Ação de Expandir a Imagem ao Clicar
+        ivFoto1.setOnClickListener { mostrarImagemExpandida(ivFoto1) }
+        ivFoto2.setOnClickListener { mostrarImagemExpandida(ivFoto2) }
+    }
+
+    private fun mostrarImagemExpandida(imageView: ImageView) {
+        val drawable = imageView.drawable ?: return // Se não tiver foto, não faz nada
+
+        // Cria um ecrã inteiro (fullscreen) preto
+        val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+
+        val dialogImageView = ImageView(this).apply {
+            setImageDrawable(drawable)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+
+            // 🔥 FORÇA O FUNDO A SER 100% PRETO E OPACO
+            setBackgroundColor(android.graphics.Color.BLACK)
+
+            // 🔥 FORÇA A IMAGEM A OCUPAR A TELA INTEIRA (Cobrindo as barras de status)
+            layoutParams = android.view.ViewGroup.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT
+            )
+
+            // Se clicar na foto gigante, ela fecha
+            setOnClickListener { dialog.dismiss() }
+        }
+
+        dialog.setContentView(dialogImageView)
+        dialog.show()
+    }
+    // ----------------------------------------------
+
     private fun configurarBotoesNavegacao() {
-        // Botão para ver Cardápio de Serviços
-        val btnVerServicos = findViewById<View>(R.id.btn_visualizar_servicos)
-        btnVerServicos.setOnClickListener {
+        findViewById<View>(R.id.btn_visualizar_servicos).setOnClickListener {
             val intent = Intent(this, CardapioServicosActivity::class.java)
             intent.putExtra("USER_ID", oficinaId)
             startActivity(intent)
         }
 
-        // Botão para ver Frota (Veículos)
-        val btnVerVeiculos = findViewById<View>(R.id.btn_visualizar_veiculos)
-        btnVerVeiculos.setOnClickListener {
+        findViewById<View>(R.id.btn_visualizar_veiculos).setOnClickListener {
             val intent = Intent(this, GestaoFrotaActivity::class.java)
             intent.putExtra("USER_ID", oficinaId)
             startActivity(intent)
         }
 
-        // 🔥 NOVO: Botão Sair da Conta
-        val btnSair = findViewById<MaterialButton>(R.id.btn_sair_conta)
-        btnSair.setOnClickListener {
-            val sessionManager = com.example.salvo.utils.SessionManager(this)
+        findViewById<MaterialButton>(R.id.btn_sair_conta).setOnClickListener {
+            val sessionManager = SessionManager(this)
             sessionManager.limparSessao()
 
             val intent = Intent(this, LoginActivity::class.java)
@@ -150,6 +217,14 @@ class PerfilOficinaActivity : AppCompatActivity() {
                         if (base64.isNotEmpty()) exibirBase64NoImageView(base64, findViewById(R.id.iv_banner_imagem))
                     }
 
+                    // 🔥 Puxa as fotos do local se já existirem no banco de dados!
+                    dados["foto_1"]?.let { base64 ->
+                        if (base64.isNotEmpty()) exibirBase64NoImageView(base64, findViewById(R.id.iv_foto_extra_1))
+                    }
+                    dados["foto_2"]?.let { base64 ->
+                        if (base64.isNotEmpty()) exibirBase64NoImageView(base64, findViewById(R.id.iv_foto_extra_2))
+                    }
+
                     findViewById<TextView>(R.id.tv_val_cnpj).text = dados["cnpj"] ?: "Não informado"
                     findViewById<TextView>(R.id.tv_val_localizacao).text = dados["endereco"] ?: "Não definido"
                 }
@@ -161,7 +236,6 @@ class PerfilOficinaActivity : AppCompatActivity() {
     }
 
     private fun carregarServicosDaOficina() {
-        // Agora usamos ServiceItem para manter o padrão do novo cardápio
         RetrofitClient.apiService.obterServicos(oficinaId).enqueue(object : Callback<List<ServiceItem>> {
             override fun onResponse(call: Call<List<ServiceItem>>, response: Response<List<ServiceItem>>) {
                 if (response.isSuccessful) {
@@ -197,7 +271,6 @@ class PerfilOficinaActivity : AppCompatActivity() {
         })
     }
 
-    // 2. Mantém a sua função original funcionando para nome, cnpj, foto, etc.
     private fun atualizarNoServidor(campo: String, valor: String) {
         atualizarPacoteNoServidor(mapOf(campo to valor))
     }
@@ -255,7 +328,6 @@ class PerfilOficinaActivity : AppCompatActivity() {
             layoutEdit.visibility = View.GONE
 
             if (latLng != null) {
-                // 🔥 O SEGREDO: Monta o pacote triplo e envia de UMA vez só!
                 val pacoteLocalizacao = mapOf(
                     "user_address" to novoEnd,
                     "latitude" to latLng.latitude.toString(),
@@ -263,7 +335,6 @@ class PerfilOficinaActivity : AppCompatActivity() {
                 )
                 atualizarPacoteNoServidor(pacoteLocalizacao)
             } else {
-                // Prevenção de falha caso a LatLng esteja nula
                 atualizarNoServidor("user_address", novoEnd)
             }
         }
@@ -283,16 +354,20 @@ class PerfilOficinaActivity : AppCompatActivity() {
 
     private fun exibirBase64NoImageView(base64Str: String, imageView: ImageView) {
         try {
-            val decodedString = Base64.decode(base64Str, Base64.DEFAULT)
+            // 🔥 Segurança extra: remove sujeiras que o backend possa ter enviado (como vírgulas de HTML)
+            var base64Limpo = base64Str
+            if (base64Limpo.contains(",")) base64Limpo = base64Limpo.substringAfter(",")
+            base64Limpo = base64Limpo.replace(" ", "+")
+
+            val decodedString = Base64.decode(base64Limpo, Base64.DEFAULT)
             val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
             imageView.setImageBitmap(decodedByte)
         } catch (e: Exception) {
-            Log.e("IMG", "Erro ao exibir base64")
+            Log.e("IMG", "Erro ao exibir base64: ${e.message}")
         }
     }
 
     private fun configurarAjustesTela() {
-        // Usei o root view genérico aqui para evitar erro caso seu ID de layout mude
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)

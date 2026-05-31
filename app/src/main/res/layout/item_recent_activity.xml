@@ -37,6 +37,7 @@
             android:layout_toStartOf="@+id/ll_price_time"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:orientation="vertical">
 
             <TextView
@@ -45,16 +46,36 @@
                 android:layout_height="wrap_content"
                 android:text="Carlos Silva"
                 android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_servico_distancia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Towing Service • 2.5km"
+                android:text="Guincho • 2.5km"
                 android:textColor="#9E9E9E"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_localizacao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📍 Carregando endereço..."
+                android:textColor="#94A3B8"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/tv_veiculo_designado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🚛 Veículo..."
+                android:textColor="#94A3B8"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -72,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:text="R$ 120"
                 android:textColor="#FF9800"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -81,7 +102,17 @@
                 android:layout_height="wrap_content"
                 android:text="14:30"
                 android:textColor="#9E9E9E"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textColor="#4CAF50"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginTop="6dp" />
         </LinearLayout>
 
     </RelativeLayout>

@@ -90,6 +90,14 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
         setupBottomNavigation()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (currentUserId != -1) {
+            carregarHistoricoDaOficina()
+            carregarFrotaParaOAlerta()
+        }
+    }
+
     private fun setupRecyclerView() {
         adapterAtividades = RecentActivityAdapter(emptyList()) { pedidoClicado ->
             abrirDialogoDetalhesPedido(pedidoClicado)

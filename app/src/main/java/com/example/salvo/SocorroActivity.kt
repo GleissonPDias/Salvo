@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.salvo.utils.SessionManager
 import com.example.salvo.model.PedidoSocorroRequest
 import com.example.salvo.model.PedidoSocorroResponse
 import com.example.salvo.model.PollingStatusResponse
@@ -31,6 +32,10 @@ class SocorroActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var tvStatus: TextView
     private var meuUserId = -1 // Variável global para usar no intent
+
+    private var meuNome = "Cliente"
+
+
 
     // VARIÁVEL DO RELÓGIO (POLLING)
     private var jobPolling: Job? = null
@@ -57,7 +62,14 @@ class SocorroActivity : AppCompatActivity() {
         tvStatus = findViewById(R.id.tv_status_radar)
 
         // Pega o ID do usuário que veio da tela anterior
-        meuUserId = intent.getIntExtra("USER_ID", 1)
+        val sessionManager = SessionManager(this)
+        meuUserId = sessionManager.buscarUserId()
+        meuNome = sessionManager.buscarUserNome()
+
+        if (meuUserId == -1) {
+            meuUserId = intent.getIntExtra("USER_ID", 1)
+            meuNome = intent.getStringExtra("NOME_USUARIO") ?: "Cliente"
+        }
 
         val btnConfirmar = findViewById<MaterialButton>(R.id.btn_confirmar_socorro)
 
@@ -104,6 +116,7 @@ class SocorroActivity : AppCompatActivity() {
                     // Monta o pacote para enviar ao Backend
                     val pedido = PedidoSocorroRequest(
                         customerId = meuUserId,
+                        clienteNome = meuNome,
                         latitude = localizacaoRecebida.latitude,
                         longitude = localizacaoRecebida.longitude,
                         serviceType = tipoServico,
