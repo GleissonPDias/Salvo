@@ -22,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var edit_password: EditText
     private lateinit var bt_entrar: Button
     private lateinit var bt_cadastro: TextView
+    private lateinit var tv_esqueci_senha: TextView // 🚀 1. Adicionado o botão de esqueci a senha
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +55,9 @@ class LoginActivity : AppCompatActivity() {
         bt_entrar = findViewById(R.id.btn_login)
         bt_cadastro = findViewById(R.id.text_cadastro)
 
+        // 🚀 2. Mapeando o texto no XML (Verifique se o ID no seu activity_login.xml é esse mesmo!)
+        tv_esqueci_senha = findViewById(R.id.forgot_pass)
+
         bt_entrar.setOnClickListener {
             executarLogin()
         }
@@ -62,9 +66,13 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this@LoginActivity, RegisterChooseActivity::class.java)
             startActivity(intent)
         }
+
+        // 🚀 3. Clique que leva para a tela de recuperar senha
+        tv_esqueci_senha.setOnClickListener {
+            val intent = Intent(this@LoginActivity, RedefinirSenhaActivity::class.java)
+            startActivity(intent)
+        }
     }
-
-
 
     private fun executarLogin() {
         val email = edit_email.text.toString().trim()

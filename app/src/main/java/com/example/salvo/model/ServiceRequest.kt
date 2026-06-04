@@ -84,9 +84,13 @@ data class ServiceRequest(
     }
 }
 data class PollingStatusResponse(
-    val status: String,
-    val razaoCancelamento: String?,
-    val detalhesOficina: OficinaDetalhesPolling?
+    @SerializedName("status") val status: String?,
+    @SerializedName("provider_name") val providerName: String?,
+    @SerializedName("vehicle_name") val vehicleName: String?,
+    @SerializedName("vehicle_plate") val vehiclePlate: String?,
+    @SerializedName("eta") val eta: String?,
+    @SerializedName("latitude") val latitude: Double?,
+    @SerializedName("longitude") val longitude: Double?
 )
 
 data class OficinaDetalhesPolling(

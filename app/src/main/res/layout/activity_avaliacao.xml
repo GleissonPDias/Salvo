@@ -2,136 +2,82 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/salvo_fundo"
-    android:padding="24dp"
-    tools:context=".AvaliacaoActivity">
+    android:background="#1E232D"
+    android:padding="24dp">
 
     <ImageView
-        android:id="@+id/iv_fechar_avaliacao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_back"
-        app:tint="@color/salvo_texto_principal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:id="@+id/iv_check_sucesso"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="40dp"
+        android:src="@android:drawable/checkbox_on_background"
+        app:tint="#4CAF50"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_titulo_avaliacao"
+        android:id="@+id/tv_obrigado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Serviço Finalizado!"
-        android:textColor="@color/salvo_laranja"
-        android:textSize="28sp"
+        android:layout_marginTop="24dp"
+        android:text="Serviço Concluído!"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_fechar_avaliacao" />
+        app:layout_constraintTop_toBottomOf="@id/iv_check_sucesso" />
 
     <TextView
-        android:id="@+id/tv_subtitulo_avaliacao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Como foi o atendimento?"
-        android:textColor="@color/salvo_texto_secundario"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_titulo_avaliacao" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_foto_perfil"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="32dp"
-        app:cardBackgroundColor="#1E1E1E"
-        app:cardCornerRadius="50dp"
-        app:strokeColor="@color/salvo_azul_neon"
-        app:strokeWidth="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_subtitulo_avaliacao">
-
-        <ImageView
-            android:id="@+id/iv_foto_prestador"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:padding="16dp"
-            android:src="@drawable/logo" />
-    </com.google.android.material.card.MaterialCardView>
-
-    <RatingBar
-        android:id="@+id/rating_bar_servico"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:numStars="5"
-        android:stepSize="1.0"
-        android:progressTint="@color/salvo_laranja"
-        android:secondaryProgressTint="@color/salvo_laranja"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card_foto_perfil" />
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group_elogios"
+        android:id="@+id/tv_pergunta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        app:singleSelection="false"
-        app:layout_constraintTop_toBottomOf="@id/rating_bar_servico">
+        android:layout_marginTop="8dp"
+        android:text="Como foi sua experiência com a oficina?"
+        android:textAlignment="center"
+        android:textColor="#9E9E9E"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_obrigado" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_rapido"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Chegou Rápido"
-            android:textColor="@color/salvo_texto_principal" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_preco"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Preço Justo"
-            android:textColor="@color/salvo_texto_principal" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_educado"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Muito Educado"
-            android:textColor="@color/salvo_texto_principal" />
-
-    </com.google.android.material.chip.ChipGroup>
+    <RatingBar
+        android:id="@+id/rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:numStars="5"
+        android:stepSize="1.0"
+        android:progressTint="#F39C12"
+        android:secondaryProgressTint="#F39C12"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_pergunta" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_comentario"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:hint="Deixe um comentário (opcional)"
-        app:boxStrokeColor="@color/salvo_azul_neon"
-        app:hintTextColor="@color/salvo_azul_neon"
-        app:layout_constraintTop_toBottomOf="@id/chip_group_elogios">
+        android:layout_marginTop="32dp"
+        app:boxBackgroundColor="#2A303C"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:hintTextColor="#FF9800"
+        android:textColorHint="#9E9E9E"
+        app:boxStrokeColor="#FF9800"
+        app:layout_constraintTop_toBottomOf="@id/rating_bar">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_comentario"
+            android:id="@+id/et_comentario_avaliacao"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:minLines="3"
+            android:layout_height="120dp"
             android:gravity="top"
-            android:textColor="@color/salvo_texto_principal" />
+            android:hint="Deixe um comentário (opcional)"
+            android:textColor="#FFFFFF"
+            android:inputType="textMultiLine" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -139,11 +85,10 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/salvo_laranja"
         android:text="ENVIAR AVALIAÇÃO"
-        android:textColor="@color/salvo_fundo"
-        android:textSize="16sp"
+        android:textColor="#1E232D"
         android:textStyle="bold"
+        app:backgroundTint="#FF9800"
         app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent" />
 

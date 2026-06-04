@@ -3,6 +3,7 @@ package com.example.salvo
 import com.example.salvo.model.AceitarPedidoRequestApp
 import com.example.salvo.model.AceitarPedidoResponse
 import com.example.salvo.model.AuthResponse
+import com.example.salvo.model.GenericResponse
 import com.example.salvo.model.LoginRequest
 import com.example.salvo.model.PedidoSocorroRequest
 import com.example.salvo.model.PedidoSocorroResponse
@@ -13,6 +14,7 @@ import com.example.salvo.model.ServiceItem
 import com.example.salvo.model.ServiceRequest
 import com.example.salvo.model.Vehicle
 import com.example.salvo.model.VeiculoRequest
+import com.example.salvo.model.ResetPasswordRequest // 🚀 NOVO IMPORT
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -120,7 +122,6 @@ interface ApiService {
         @Body dados: AceitarPedidoRequestApp
     ): Call<AceitarPedidoResponse>
 
-
     // Adicione esta chamada junto das outras na sua interface
     @GET("status-pedido/{id}")
     fun checarStatusPedido(
@@ -129,6 +130,34 @@ interface ApiService {
 
     @GET("listar-pedidos-oficina") // O nome da rota que você fez no Ktor
     fun obterHistoricoOficina(@Query("providerId") providerId: Int): Call<List<ServiceRequest>>
+
+
+    // ====================================================
+    // 🚀 ROTAS DOS VEÍCULOS DO CLIENTE (Mapeadas para o App)
+    // ====================================================
+    @GET("veiculos-cliente/{customerId}")
+    fun obterVeiculosCliente(@Path("customerId") customerId: Int): Call<List<Vehicle>>
+
+    @POST("adicionar-veiculo-cliente")
+    fun adicionarVeiculoCliente(@Body dados: Map<String, String?>): Call<AuthResponse>
+
+    @PUT("atualizar-veiculo-cliente/{id}")
+    fun atualizarVeiculoCliente(@Path("id") id: Int, @Body dados: Map<String, String?>): Call<AuthResponse>
+
+    @DELETE("excluir-veiculo-cliente/{id}/{customerId}")
+    fun excluirVeiculoCliente(@Path("id") id: Int, @Path("customerId") customerId: Int): Call<AuthResponse>
+
+    // ====================================================
+    // 🚀 ROTA DE REDEFINIÇÃO DE SENHA
+    // ====================================================
+    @POST("recuperar-senha")
+    fun solicitarRedefinicaoSenha(@Body dados: ResetPasswordRequest): Call<GenericResponse>
+
+    // ====================================================
+    // 🚀 ROTA DE AVALIAÇÃO DO PEDIDO
+    // ====================================================
+    @POST("avaliar-pedido")
+    fun enviarAvaliacao(@Body dados: Map<String, String>): Call<AuthResponse>
 
 }
 

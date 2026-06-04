@@ -84,6 +84,13 @@
         <activity
             android:name=".MeusVeiculosActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".RedefinirSenhaActivity"
+            android:exported="false" />
+
+        <activity android:name=".AcompanhamentoPedidoActivity" />
+
     </application>
 
 </manifest>

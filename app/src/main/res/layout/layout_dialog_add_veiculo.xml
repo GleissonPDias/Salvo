@@ -116,6 +116,24 @@
         android:textColorHint="#9E9E9E"
         app:boxStrokeColor="#FF9800">
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_cor_veiculo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Cor (ex: Prata, Preto, Vermelho)"
+            android:textColor="#FFFFFF"
+            android:inputType="textCapWords" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_data_manutencao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        app:hintTextColor="#FF9800"
+        android:textColorHint="#9E9E9E"
+        app:boxStrokeColor="#FF9800">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_data_manutencao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

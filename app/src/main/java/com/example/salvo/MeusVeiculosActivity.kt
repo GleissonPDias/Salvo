@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import android.view.View
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
@@ -18,11 +17,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.salvo.adapter.VehicleAdapter
 import com.example.salvo.model.AuthResponse
 import com.example.salvo.model.Vehicle
-import com.example.salvo.model.VeiculoRequest
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
 import java.io.ByteArrayOutputStream
 import retrofit2.Call
 import retrofit2.Callback
@@ -49,7 +48,17 @@ class MeusVeiculosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_meus_veiculos)
 
-        customerId = intent.getIntExtra("USER_ID", -1)
+        // Puxar do SessionManager
+        val sessionManager = com.example.salvo.utils.SessionManager(this)
+        customerId = sessionManager.buscarUserId()
+
+        if (customerId == -1) {
+            customerId = intent.getIntExtra("USER_ID", -1)
+        }
+
+        if (customerId == -1) {
+            Toast.makeText(this, "Erro de sessão: Faça login novamente.", Toast.LENGTH_LONG).show()
+        }
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar_veiculos)
         toolbar.setNavigationOnClickListener { finish() }
@@ -75,20 +84,15 @@ class MeusVeiculosActivity : AppCompatActivity() {
 
     // --- 1. CARREGAR E LISTAR ---
     private fun carregarVeiculos() {
-        RetrofitClient.apiService.obterVeiculos(customerId).enqueue(object : Callback<List<Vehicle>> {
+        RetrofitClient.apiService.obterVeiculosCliente(customerId).enqueue(object : Callback<List<Vehicle>> {
             override fun onResponse(call: Call<List<Vehicle>>, response: Response<List<Vehicle>>) {
                 if (response.isSuccessful) {
-                    // AQUI ESTÁ A CORREÇÃO: Transformamos a resposta em MutableList
                     val lista = response.body()?.toMutableList() ?: mutableListOf()
 
                     rvVeiculos.adapter = VehicleAdapter(
                         vehicles = lista,
-                        onVehicleClick = { veiculoClicado ->
-                            abrirDialogoCadastroEdicao(veiculoClicado)
-                        },
-                        onVehicleLongClick = { veiculoClicado ->
-                            abrirDialogoCadastroEdicao(veiculoClicado)
-                        }
+                        onVehicleClick = { veiculoClicado -> abrirDialogoCadastroEdicao(veiculoClicado) },
+                        onVehicleLongClick = { veiculoClicado -> abrirDialogoCadastroEdicao(veiculoClicado) }
                     )
                 }
             }
@@ -103,21 +107,31 @@ class MeusVeiculosActivity : AppCompatActivity() {
         base64Veiculo = null // Reseta a foto para a nova operação
 
         val dialog = BottomSheetDialog(this, R.style.Theme_Salvo)
-        // 👇 AQUI: Aponta para o seu layout existente
         val view = layoutInflater.inflate(R.layout.layout_dialog_add_veiculo, null)
         dialog.setContentView(view)
 
-        // 👇 AQUI: Usando os exatos IDs do seu XML
         val ivPreview = view.findViewById<ImageView>(R.id.iv_preview_foto)
-        val etModelo = view.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.et_nome_veiculo)
-        val etPlaca = view.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.et_placa_veiculo)
-        val btnSalvar = view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_salvar_veiculo)
+        val etMarca = view.findViewById<TextInputEditText>(R.id.et_marca_veiculo)
+        val etModelo = view.findViewById<TextInputEditText>(R.id.et_nome_veiculo)
+        val etPlaca = view.findViewById<TextInputEditText>(R.id.et_placa_veiculo)
+        val etTipo = view.findViewById<TextInputEditText>(R.id.et_tipo_veiculo)
+        val etCor = view.findViewById<TextInputEditText>(R.id.et_cor_veiculo)
 
-        // Se for edição, preenche com os dados antigos e muda o texto do botão
+        val btnSalvar = view.findViewById<MaterialButton>(R.id.btn_salvar_veiculo)
+
+        // Esconde o campo de manutenção para o Cliente
+        view.findViewById<View>(R.id.til_data_manutencao).visibility = View.GONE
+
+        // Se for edição, preenche com os dados antigos
         if (veiculoExistente != null) {
             btnSalvar.text = "SALVAR ALTERAÇÕES"
             etModelo.setText(veiculoExistente.name)
             etPlaca.setText(veiculoExistente.plate)
+
+            // Se você já tiver os campos de marca, tipo e cor no modelo, pode preenchê-oldos aqui
+            // etMarca.setText(veiculoExistente.brand)
+            // etCor.setText(veiculoExistente.color)
+            // etTipo.setText(veiculoExistente.vehicleType)
 
             if (!veiculoExistente.vehiclePhoto.isNullOrEmpty()) {
                 try {
@@ -126,9 +140,7 @@ class MeusVeiculosActivity : AppCompatActivity() {
                     ivPreview.setImageBitmap(bitmap)
                     ivPreview.imageTintList = null
                     ivPreview.scaleType = ImageView.ScaleType.CENTER_CROP
-                } catch (e: Exception) {
-                    // Ignora se der erro ao converter Base64
-                }
+                } catch (e: Exception) { }
             }
         }
 
@@ -140,57 +152,73 @@ class MeusVeiculosActivity : AppCompatActivity() {
 
         // Clique para salvar
         btnSalvar.setOnClickListener {
+            // 🚀 AQUI: Pegando todos os dados corretamente!
+            val marca = etMarca.text.toString().trim()
             val modelo = etModelo.text.toString().trim()
             val placa = etPlaca.text.toString().trim()
+            val tipo = etTipo.text.toString().trim()
+            val cor = etCor.text.toString().trim()
 
-            if (modelo.isNotEmpty() && placa.isNotEmpty()) {
+            // Validação completa de todos os campos
+            if (marca.isNotEmpty() && modelo.isNotEmpty() && placa.isNotEmpty() && tipo.isNotEmpty() && cor.isNotEmpty()) {
                 if (veiculoExistente == null) {
-                    salvarNovoVeiculoNaApi(modelo, placa, dialog)
+                    salvarNovoVeiculoNaApi(modelo, placa, marca, cor, tipo, dialog)
                 } else {
-                    // Passamos também a foto antiga para não perdê-la caso ele não escolha uma nova
-                    atualizarVeiculoNaApi(veiculoExistente.id, modelo, placa, veiculoExistente.vehiclePhoto, dialog)
+                    atualizarVeiculoNaApi(veiculoExistente.id, modelo, placa, marca, cor, tipo, veiculoExistente.vehiclePhoto, dialog)
                 }
             } else {
-                Toast.makeText(this, "Preencha o nome e a placa.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Preencha todos os campos obrigatórios.", Toast.LENGTH_SHORT).show()
             }
         }
         dialog.show()
     }
 
-    // 🔥 SUBSTITUA A FUNÇÃO ANTIGA POR ESTA
-    private fun salvarNovoVeiculoNaApi(modelo: String, placa: String, dialog: BottomSheetDialog) {
-        // Usando a Data Class em vez de mapOf
-        val dados = VeiculoRequest(
-            providerId = customerId, // O backend recebe na mesma variável
-            name = modelo,
-            plate = placa,
-            vehiclePhoto = base64Veiculo
+    // --- 3. SALVAR NOVO (VIA API CLIENTE) ---
+    private fun salvarNovoVeiculoNaApi(modelo: String, placa: String, marca: String, cor: String, tipo: String, dialog: BottomSheetDialog) {
+        val dados = mapOf(
+            "customer_id" to customerId.toString(),
+            "name" to modelo,
+            "plate" to placa,
+            "brand" to marca,
+            "color" to cor,
+            "vehicle_type" to tipo,
+            "vehicle_photo" to base64Veiculo
         )
 
-        RetrofitClient.apiService.adicionarVeiculo(dados).enqueue(object : Callback<AuthResponse> {
+        RetrofitClient.apiService.adicionarVeiculoCliente(dados).enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@MeusVeiculosActivity, "Carro salvo!", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                     carregarVeiculos()
+                } else {
+                    val erroBody = response.errorBody()?.string() ?: "Sem detalhes"
+                    Toast.makeText(this@MeusVeiculosActivity, "Erro: $erroBody", Toast.LENGTH_LONG).show()
                 }
             }
-            override fun onFailure(call: Call<AuthResponse>, t: Throwable) {}
+            override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
+                Toast.makeText(this@MeusVeiculosActivity, "Falha de conexão.", Toast.LENGTH_SHORT).show()
+            }
         })
     }
 
-    // 🔥 SUBSTITUA A FUNÇÃO ANTIGA POR ESTA
-    private fun atualizarVeiculoNaApi(veiculoId: Int, modelo: String, placa: String, fotoAntiga: String?, dialog: BottomSheetDialog) {
-        // Usando a Data Class em vez de mutableMapOf
-        val dados = VeiculoRequest(
-            id = veiculoId,
-            providerId = customerId,
-            name = modelo,
-            plate = placa,
-            vehiclePhoto = base64Veiculo ?: fotoAntiga // Se não escolheu foto nova, mantém a antiga
+    // --- 4. ATUALIZAR EXISTENTE (VIA API CLIENTE) ---
+    private fun atualizarVeiculoNaApi(veiculoId: Int, modelo: String, placa: String, marca: String, cor: String, tipo: String, fotoAntiga: String?, dialog: BottomSheetDialog) {
+        val dados = mutableMapOf(
+            "customer_id" to customerId.toString(),
+            "name" to modelo,
+            "plate" to placa,
+            "brand" to marca,
+            "color" to cor,
+            "vehicle_type" to tipo
         )
 
-        RetrofitClient.apiService.atualizarVeiculoCompleto(veiculoId, dados).enqueue(object : Callback<AuthResponse> {
+        val fotoFinal = base64Veiculo ?: fotoAntiga
+        if (fotoFinal != null) {
+            dados["vehicle_photo"] = fotoFinal
+        }
+
+        RetrofitClient.apiService.atualizarVeiculoCliente(veiculoId, dados).enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@MeusVeiculosActivity, "Dados atualizados!", Toast.LENGTH_SHORT).show()
@@ -198,11 +226,13 @@ class MeusVeiculosActivity : AppCompatActivity() {
                     carregarVeiculos()
                 }
             }
-            override fun onFailure(call: Call<AuthResponse>, t: Throwable) {}
+            override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
+                Toast.makeText(this@MeusVeiculosActivity, "Falha de conexão.", Toast.LENGTH_SHORT).show()
+            }
         })
     }
 
-    // --- 3. EXCLUIR (SWIPE TO DELETE) ---
+    // --- 5. EXCLUIR (SWIPE TO DELETE) ---
     private fun configurarSwipeToDelete() {
         val callback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder) = false
@@ -216,7 +246,7 @@ class MeusVeiculosActivity : AppCompatActivity() {
 
                 if (veiculoAlvo != null) {
                     adapter.removerItem(position)
-                    RetrofitClient.apiService.excluirVeiculo(veiculoAlvo.id, customerId).enqueue(object: Callback<AuthResponse>{
+                    RetrofitClient.apiService.excluirVeiculoCliente(veiculoAlvo.id, customerId).enqueue(object: Callback<AuthResponse>{
                         override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {}
                         override fun onFailure(call: Call<AuthResponse>, t: Throwable) { carregarVeiculos() }
                     })
@@ -226,7 +256,7 @@ class MeusVeiculosActivity : AppCompatActivity() {
         ItemTouchHelper(callback).attachToRecyclerView(rvVeiculos)
     }
 
-    // --- 4. CONVERSOR DE IMAGEM ---
+    // --- 6. CONVERSOR DE IMAGEM ---
     private fun uriToBase64(uri: Uri): String? {
         return try {
             val inputStream = contentResolver.openInputStream(uri)
