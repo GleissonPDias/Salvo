@@ -2,12 +2,12 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="app">
+      <SelectionState runConfigName="Salvo">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-05-31T17:07:08.908332800Z">
+        <DropdownSelection timestamp="2026-06-07T22:51:49.583342600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=5d0782520000" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\GleissonBdf\.android\avd\Pixel_4.avd" />
             </handle>
           </Target>
         </DropdownSelection>

@@ -48,6 +48,7 @@ class SocorroActivity : AppCompatActivity() {
 
     private var veiculosDoCliente: List<Vehicle> = emptyList()
     private var idVeiculoSelecionado: Int? = null
+    private var tipoServico: String = "Guincho"
 
     private var jobPolling: Job? = null
 
@@ -79,10 +80,14 @@ class SocorroActivity : AppCompatActivity() {
         meuUserId = sessionManager.buscarUserId()
         meuNome = sessionManager.buscarUserNome()
 
+        tipoServico = intent.getStringExtra("TIPO_SERVICO") ?: "Guincho"
+
         if (meuUserId == -1) {
             meuUserId = intent.getIntExtra("USER_ID", 1)
             meuNome = intent.getStringExtra("NOME_USUARIO") ?: "Cliente"
         }
+
+        tipoServico = intent.getStringExtra("TIPO_SERVICO") ?: "Guincho"
 
         carregarVeiculosDoCliente()
         buscarLocalizacaoInicial()
@@ -195,8 +200,6 @@ class SocorroActivity : AppCompatActivity() {
                 if (localizacaoRecebida != null) {
                     tvStatus.text = "GPS OK! Varrendo o mapa num raio de 15km..."
                     exibirEnderecoNaTela(localizacaoRecebida.latitude, localizacaoRecebida.longitude)
-
-                    val tipoServico = "Guincho"
 
                     val pedido = PedidoSocorroRequest(
                         customerId = meuUserId,

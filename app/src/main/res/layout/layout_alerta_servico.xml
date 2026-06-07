@@ -40,7 +40,7 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="ALERTA DE SERVIÇO"
                     android:textColor="#151C26"
@@ -48,9 +48,11 @@
                     android:textSize="13sp"
                     android:letterSpacing="0.05"
                     android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/iv_aviso" />
+                    app:layout_constraintStart_toEndOf="@id/iv_aviso"
+                    app:layout_constraintEnd_toStartOf="@id/tv_alerta_preco" />
 
                 <TextView
                     android:id="@+id/tv_alerta_preco"
@@ -79,6 +81,7 @@
                     android:textColor="#FFFFFF"
                     android:textSize="22sp"
                     android:textStyle="bold"
+                    android:layout_marginEnd="16dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/iv_veiculo_foto" />
@@ -92,6 +95,7 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:layout_marginTop="4dp"
+                    android:layout_marginEnd="16dp"
                     app:layout_constraintTop_toBottomOf="@id/tv_alerta_veiculo"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/iv_veiculo_foto" />
@@ -104,6 +108,7 @@
                     android:textColor="#94A3B8"
                     android:textSize="13sp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
                     app:layout_constraintTop_toBottomOf="@id/tv_alerta_defeito"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/iv_veiculo_foto" />
@@ -126,6 +131,14 @@
                         app:tint="#94A3B8" />
                 </androidx.cardview.widget.CardView>
 
+                <!-- 🚧 Barreira para impedir que textos longos fiquem por cima do painel do cliente -->
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier_alerta_topo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="tv_alerta_distancia,iv_veiculo_foto" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_cliente_row"
                     android:layout_width="match_parent"
@@ -133,7 +146,7 @@
                     android:background="@drawable/bg_client_box"
                     android:layout_marginTop="16dp"
                     android:padding="12dp"
-                    app:layout_constraintTop_toBottomOf="@id/iv_veiculo_foto"
+                    app:layout_constraintTop_toBottomOf="@id/barrier_alerta_topo"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
 
@@ -156,9 +169,13 @@
                         android:textStyle="bold"
                         android:textSize="14sp"
                         android:layout_marginStart="10dp"
+                        android:layout_marginEnd="8dp"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/tv_alerta_cliente_nota"
                         app:layout_constraintStart_toEndOf="@id/iv_avatar_cliente"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_recusar" />
+                        app:layout_constraintEnd_toStartOf="@+id/btn_recusar"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
 
                     <TextView
                         android:id="@+id/tv_alerta_cliente_nota"
@@ -168,7 +185,10 @@
                         android:textColor="#FF9800"
                         android:textSize="12sp"
                         android:layout_marginStart="10dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="2dp"
                         app:layout_constraintTop_toBottomOf="@id/tv_alerta_cliente_nome"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/iv_avatar_cliente"
                         app:layout_constraintEnd_toStartOf="@+id/btn_recusar" />
 
@@ -190,7 +210,7 @@
 
                 <TextView
                     android:id="@+id/tv_titulo_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="QUAL VEÍCULO FARÁ O RESGATE?"
                     android:textColor="#94A3B8"
@@ -198,16 +218,19 @@
                     android:textStyle="bold"
                     android:layout_marginTop="16dp"
                     app:layout_constraintTop_toBottomOf="@id/layout_cliente_row"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
                 <Spinner
                     android:id="@+id/spinner_veiculo_resgate"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_marginTop="6dp"
+                    android:layout_marginBottom="8dp"
                     android:backgroundTint="#FFFFFF"
                     android:spinnerMode="dropdown"
                     app:layout_constraintTop_toBottomOf="@id/tv_titulo_spinner"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
@@ -222,6 +245,7 @@
         android:background="@drawable/bg_slider_track"
         android:layout_marginTop="12dp"
         app:layout_constraintTop_toBottomOf="@id/card_alerta"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
