@@ -223,7 +223,7 @@ class CardapioServicosActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    // DIÁLOGO: PREÇO POR KM / HORA
+    // DIÁLOGO: PREÇO POR KM
     private fun abrirDialogoPrecoKm(servicoAtual: ServiceItem?) {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.dialog_add_servico_per_km, null)
@@ -231,14 +231,12 @@ class CardapioServicosActivity : AppCompatActivity() {
 
         val etNome = view.findViewById<TextInputEditText>(R.id.et_nome_servico_km)
         val etPrecoKm = view.findViewById<TextInputEditText>(R.id.et_preco_km)
-        val etPrecoHora = view.findViewById<TextInputEditText>(R.id.et_preco_hora) // Mapeado como base_price na API
         val btnCancelar = view.findViewById<Button>(R.id.btn_cancelar_km)
         val btnSalvar = view.findViewById<Button>(R.id.btn_salvar_km)
 
         servicoAtual?.let {
             etNome.setText(it.serviceType)
             etPrecoKm.setText(it.pricePerKm.toString())
-            etPrecoHora.setText(it.basePrice.toString())
             btnSalvar.text = "SALVAR ALTERAÇÕES"
         }
 
@@ -247,23 +245,22 @@ class CardapioServicosActivity : AppCompatActivity() {
         btnSalvar.setOnClickListener {
             val nome = etNome.text.toString().trim()
             val precoKmStr = etPrecoKm.text.toString().trim().replace(",", ".")
-            val precoHoraStr = etPrecoHora.text.toString().trim().replace(",", ".")
 
-            if (nome.isNotEmpty() && (precoKmStr.isNotEmpty() || precoHoraStr.isNotEmpty())) {
+            if (nome.isNotEmpty() && precoKmStr.isNotEmpty()) {
                 val precoKm = precoKmStr.toDoubleOrNull() ?: 0.0
-                val precoHora = precoHoraStr.toDoubleOrNull() ?: 0.0
 
+                // Envia "0.0" para o base_price já que a cobrança é exclusivamente por Km
                 val dados = mapOf(
                     "provider_id" to providerId.toString(),
                     "service_type" to nome,
-                    "base_price" to precoHora.toString(),
+                    "base_price" to "0.0",
                     "price_per_km" to precoKm.toString()
                 )
 
                 if (servicoAtual == null) enviarNovoServicoParaApi(dados, dialog)
                 else atualizarServicoExistenteNaApi(servicoAtual.id, dados, dialog)
             } else {
-                Toast.makeText(this, "Preencha o nome e pelo menos um dos valores", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Preencha o nome e o valor por Km", Toast.LENGTH_SHORT).show()
             }
         }
         dialog.show()

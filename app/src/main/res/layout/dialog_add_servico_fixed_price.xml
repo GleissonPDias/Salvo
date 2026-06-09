@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="@drawable/background"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="20dp">
@@ -9,11 +10,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Adicionar Serviço com Preço Fixo"
+        android:textColor="@color/editTxtBg"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="8dp" />
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
