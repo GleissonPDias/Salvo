@@ -46,11 +46,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#161922"
+        app:layout_constraintTop_toBottomOf="@id/top_bar"
         app:tabIndicatorColor="#F59E0B"
         app:tabIndicatorHeight="3dp"
         app:tabSelectedTextColor="#FFFFFF"
         app:tabTextColor="#9CA3AF"
-        app:layout_constraintTop_toBottomOf="@id/top_bar">
+        tools:layout_editor_absoluteX="0dp">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -60,7 +61,7 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Por KM/Hora" />
+            android:text="Por KM" />
 
     </com.google.android.material.tabs.TabLayout>
 
