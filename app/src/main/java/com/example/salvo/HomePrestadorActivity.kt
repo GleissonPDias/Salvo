@@ -176,7 +176,7 @@ class HomePrestadorActivity : AppCompatActivity(), OnMapReadyCallback {
                             var totalResgates = 0
 
                             for (pedido in listaHistorico) {
-                                if (pedido.status == "completed" || pedido.status == "accepted") {
+                                if (pedido.status == "completed" || pedido.status == "accepted" || pedido.status == "arrived" || pedido.status == "en_route" || pedido.status == "in_progress") {
                                     totalResgates++
                                     totalGanhos += pedido.finalPrice ?: 0.0
                                 }
