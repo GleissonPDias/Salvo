@@ -24,5 +24,7 @@ data class Vehicle(
     val maintenanceDate: String?, // NOVO: Data (ex: 15/06/2026)
 
     @SerializedName("vehicle_photo")
-    val vehiclePhoto: String? // Base64
+    val vehiclePhoto: String?, // Base64
+
+    val color: String? = null // NOVO: Cor (ex: Preto)
 )

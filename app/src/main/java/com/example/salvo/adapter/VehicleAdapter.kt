@@ -48,9 +48,15 @@ class VehicleAdapter(
                 val imageBytes = Base64.decode(v.vehiclePhoto, Base64.DEFAULT)
                 val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                 holder.ivFoto.setImageBitmap(bitmap)
+                holder.ivFoto.imageTintList = null
+                holder.ivFoto.scaleType = ImageView.ScaleType.CENTER_CROP
             } catch (e: Exception) {
                 holder.ivFoto.setImageResource(android.R.drawable.ic_menu_camera)
+                holder.ivFoto.scaleType = ImageView.ScaleType.CENTER_INSIDE
             }
+        } else {
+            holder.ivFoto.setImageResource(android.R.drawable.ic_menu_camera)
+            holder.ivFoto.scaleType = ImageView.ScaleType.CENTER_INSIDE
         }
 
         // Toque Simples (Abre a nova tela)

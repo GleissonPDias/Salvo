@@ -128,10 +128,9 @@ class MeusVeiculosActivity : AppCompatActivity() {
             etModelo.setText(veiculoExistente.name)
             etPlaca.setText(veiculoExistente.plate)
 
-            // Se você já tiver os campos de marca, tipo e cor no modelo, pode preenchê-oldos aqui
-            // etMarca.setText(veiculoExistente.brand)
-            // etCor.setText(veiculoExistente.color)
-            // etTipo.setText(veiculoExistente.vehicleType)
+            etMarca.setText(veiculoExistente.brand)
+            etCor.setText(veiculoExistente.color)
+            etTipo.setText(veiculoExistente.vehicleType)
 
             if (!veiculoExistente.vehiclePhoto.isNullOrEmpty()) {
                 try {
