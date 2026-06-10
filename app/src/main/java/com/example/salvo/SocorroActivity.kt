@@ -153,7 +153,7 @@ class SocorroActivity : AppCompatActivity() {
                         return
                     }
 
-                    val nomesVeiculos = veiculosDoCliente.map { "${it.name} - ${it.plate}" }
+                    val nomesVeiculos = veiculosDoCliente.map { "${it.brand} -  ${it.name} - ${it.plate}" }
 
                     val dropdown = findViewById<AutoCompleteTextView>(R.id.actv_veiculo_socorro)
                     val adapter = ArrayAdapter(
@@ -248,7 +248,6 @@ class SocorroActivity : AppCompatActivity() {
 
         jobPolling = lifecycleScope.launch {
             while (isActive) {
-                // Aqui a chamada está 100% amarrada aos imports corretos do topo
                 RetrofitClient.apiService.checarStatusPedido(requestId).enqueue(object : Callback<PollingStatusResponse> {
                     override fun onResponse(call: Call<PollingStatusResponse>, response: Response<PollingStatusResponse>) {
                         if (response.isSuccessful) {
